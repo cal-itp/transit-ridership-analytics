@@ -1,0 +1,13 @@
+organization_name: "SunLine Transit Agency"
+service_name: "SunLine Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/sunline_transit_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Stop ID": stop_id
+    "Stop Name": stop_name
+    "Latitude": stop_lat
+    "Longitude": stop_lon
+    "Avg. Boards": avg_boardings
+    "Avg. Alights": avg_alightings
+agg_basis: "fiscal year"
+notes: ""

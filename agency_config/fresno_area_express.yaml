@@ -1,0 +1,13 @@
+organization_name: "City of Fresno"
+service_name: "Fresno Area Express"
+file_path: "transit_agency_ridership_preprocessed_datasets/fresno_area_express_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    Date: date
+    StopID: stop_id
+    StopLabel: stop_name
+    ProjectedBoarding: avg_boardings
+    ProjectedAlighting: avg_alightings
+agg_basis: "daily"
+notes: "Dataset include most specific fixed route data. Data collected by Dilax APCs goes through trip matching process and projection process. Data provided is final projected boardings/alightings used for official reporting. 1.1% of trips locked by Dilax and unusable. No service on Thanksgiving and Christmas day. "
+    

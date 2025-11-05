@@ -1,0 +1,13 @@
+key: string
+agency_name: string
+dataset_id: string
+date: string
+stop_id: string
+stop_name: string
+direction: string
+stop_lat: float
+stop_lon: float
+avg_boardings: float
+avg_alightings: float
+avg_ridership: float
+agg_basis: string

@@ -1,0 +1,14 @@
+organization_name: "Long Beach Transit"
+service_name: "Long Beach Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/long_beach_transit_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    DayType: day_type
+    Route: route_id
+    Direction: direction
+    StopID: stop_id
+    StopName: stop_name
+    Boardings: avg_boardings
+    Alightings: avg_alightings
+agg_basis: "fiscal year"
+notes: "Compiled through survey efforts, supplemented with APC data."
