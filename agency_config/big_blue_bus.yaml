@@ -1,0 +1,17 @@
+organization_name: "City of Santa Monica"
+service_name: "Big Blue Bus"
+file_path: "transit_agency_ridership_preprocessed_datasets/big_blue_bus_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    SERVICE_DAY: day_type
+    ROUTE_NUMBER: route_id
+    ROUTE_NAME: route_name
+    DIRECTION_NAME: direction
+    STOP_ID: stop_id
+    STOP_NAME: stop_name
+    STOP_LAT: stop_lat
+    STOP_LON: stop_lon
+    AVERAGE_DAILY_BOARDINGS: avg_boardings
+    AVERAGE_DAILY_ALIGHTINGS: avg_alightings
+agg_basis: "service period"
+notes: "Big Blue Bus implement three service that changes annually, referenced as SERVICE_PERIOD and named after the month they take effect in raw data. Each service lasts for approximately 4 months."

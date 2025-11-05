@@ -1,0 +1,11 @@
+organization_name: "San Francisco Bay Area Rapid Transit District"
+service_name: "Bay Area Rapid Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/bart_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Day Type": day_type
+    "Station Name": stop_name
+    Entries: avg_boardings
+    Exits: avg_alightings
+agg_basis: "daily"
+notes: ""

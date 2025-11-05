@@ -1,0 +1,9 @@
+organization_name: "OmniTrans"
+service_name: "OmniTrans"
+file_path: "transit_agency_ridership_preprocessed_datasets/omni_trans_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    Route: route_id
+    "Stop Name": stop_name
+agg_basis: "fiscal year"
+notes: ""

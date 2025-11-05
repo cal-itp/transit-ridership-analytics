@@ -1,0 +1,11 @@
+organization_name: "Santa Cruz Metropolitan Transit District"
+service_name: "Santa Cruz METRO"
+file_path: "transit_agency_ridership_preprocessed_datasets/santa_cruz_metro_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Stop ID": stop_id
+    "Stop Name": stop_name
+    "Boardings": avg_boardings
+    "Alightings": avg_alightings
+agg_basis: "custom period"
+notes: "Several buses without APC hardware (5 in March and 8 in April 2025) didn't collect data. Clever Insights failed to collect APC data on all routes from 2025-06-16 to 2025-06-30."

@@ -1,0 +1,13 @@
+organization_name: "Golden Gate Bridge, Highway and Transportation District"
+service_name: "Golden Gate Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/golden_gate_transit_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    ROUTE: route_id
+    DIRECTION: direction
+    STOP_NUMBER: stop_id
+    STOP_NAME: stop_name
+    BOARDINGS: avg_boardings
+    ALIGHTINGS: avg_alightings
+agg_basis: "daily"
+notes: "The dataset includes stop-level ridership and virtual time point data. When POINT_ROLE = 'T', the entries do not contain boarding or alighting information."

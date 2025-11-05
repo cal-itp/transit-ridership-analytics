@@ -1,0 +1,14 @@
+organization_name: "City of Culver City"
+service_name: "Culver CityBus"
+file_path: "transit_agency_ridership_preprocessed_datasets/culver_citybus_detail_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Day of Week": day_type
+    "Direction": direction
+    "Route": route_name
+    "Stop ID": stop_id
+    "Stop Name": stop_name
+    "AVG On": avg_boardings
+    "AVG Off": avg_alightings
+agg_basis: "custom period"
+notes: "Data collected with Hella APCs and processed by UTA Transit. Data is undercount. Trips that were rejected by APC processing software are dropped. Data reported to NTD is factored to replace the rejected trips and is higher."
