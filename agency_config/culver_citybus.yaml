@@ -1,6 +1,6 @@
 organization_name: "City of Culver City"
 service_name: "Culver CityBus"
-file_path: "transit_agency_ridership_preprocessed_datasets/culver_citybus_detail_ridership.xlsx"
+file_path: "transit_agency_ridership_preprocessed_datasets/culver_citybus_ridership.xlsx"
 file_type: "xlsx"
 column_mapping:
     "Day of Week": day_type

@@ -1,6 +1,6 @@
 organization_name: "Peninsula Corridor Joint Powers Board"
 service_name: "Caltrain"
-file_path: "transit_agency_ridership_preprocessed_datasets/caltrain_detail_ridership.xlsx"
+file_path: "transit_agency_ridership_preprocessed_datasets/caltrain_ridership.xlsx"
 file_type: "xlsx"
 column_mapping:
     "Origin Station": stop_name

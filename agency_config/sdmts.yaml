@@ -3,7 +3,6 @@ service_name: "San Diego Metropolitan Transit System"
 file_path: "transit_agency_ridership_preprocessed_datasets/sdmts_ridership.xlsx"
 file_type: "xlsx"
 column_mapping:
-    "Day Of Week": day_type
     "Route": route_id
     "Route Name": route_name
     "Stop ID": stop_id
