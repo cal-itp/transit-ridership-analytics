@@ -1,0 +1,12 @@
+organization_name: "San Mateo County Transit District"
+service_name: "SamTrans"
+file_path: "transit_agency_ridership_preprocessed_datasets/samtrans_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Route": route_id
+    "Stop ID": stop_id
+    "Stop Name": stop_name
+    "Ons": avg_boardings
+    "Offs": avg_alightings
+agg_basis: "daily"
+notes: "APCs are not NTD-certified and has error rate above 5% threshold required by NTD. This is the only source for stop-level data at this time."
