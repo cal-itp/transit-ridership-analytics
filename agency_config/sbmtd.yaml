@@ -5,8 +5,5 @@ file_type: "xlsx"
 column_mapping:
     "Stop ID": stop_id
     "Stop Name": stop_name
-    "Ridership by Stop_Alightings": avg_boardings
-    "Ridership by Stop_Boardings": avg_alightings
-    "Ridership by Stop_Total Act.": avg_ridership
 agg_basis: "monthly"
 notes: "Data collected using APC and sourced through Hopthru, which the agency received NTD certification for. In rare event that the APCs do not recognize a data point and discard it."
