@@ -6,6 +6,8 @@ column_mapping:
     "Route": route_id
     "Stop ID": stop_id
     "Stop Name": stop_name
+    "Lat": stop_lat
+    "Lon": stop_lon
     "Ons": avg_boardings
     "Offs": avg_alightings
 agg_basis: "daily"

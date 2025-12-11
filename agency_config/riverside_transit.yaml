@@ -4,6 +4,7 @@ file_path: "transit_agency_ridership_preprocessed_datasets/riverside_transit_rid
 file_type: "xlsx"
 column_mapping:
     "Stop ID": stop_id
+    "Stop Name": stop_name
     Route: route_id
     Direction: direction
     Longitude: stop_lon

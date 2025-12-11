@@ -7,6 +7,8 @@ column_mapping:
     day_of_week: day_type
     total_on: avg_boardings
     total_off: avg_alightings
+    lat: stop_lat
+    lon: stop_lon
 agg_basis: "monthly"
 notes: "We received raw data for May and October, from 2018 to 2025. In first release we only import May 2025 data, which contains most clear and comprehensive columns/info."
     

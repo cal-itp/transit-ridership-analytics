@@ -1,2 +1,3 @@
 transit_agency_ridership_raw_datasets/Riverside Transit/*.csv
 transit_agency_ridership_raw_datasets/Riverside Transit/
+staging_stop_ridership.csv
