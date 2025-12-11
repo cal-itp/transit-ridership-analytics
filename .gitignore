@@ -137,5 +137,3 @@ dmypy.json
 
 # Macos
 .DS_Store
-=======
->>>>>>> 8aa44bf (Add Riverside data, ignore raw csv files)

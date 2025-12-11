@@ -5,6 +5,7 @@ file_type: "xlsx"
 column_mapping:
     "Day of Week": day_type
     "Direction": direction
+    route_id: route_id
     "Route": route_name
     "Stop ID": stop_id
     "Stop Name": stop_name

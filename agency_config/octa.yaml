@@ -5,8 +5,9 @@ file_type: "xlsx"
 column_mapping:
     Route: route_name
     Direction: direction
+    stop_id: stop_id
     "Stop Name": stop_name
     "APC Boarding": avg_boardings
     "APC Alighting": avg_alightings
 agg_basis: "daily"
-notes: "2025/2/4 has highest boarding in Q1 2025."
+notes: "2025/2/4 has highest boarding in Q1 2025. Stop id extracted from raw stop name."
