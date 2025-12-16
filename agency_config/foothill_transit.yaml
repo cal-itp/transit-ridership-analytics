@@ -1,0 +1,14 @@
+organization_name: "Foothill Transit"
+service_name: "Foothill Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/foothill_transit_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    route_short_name: route_id
+    stop_code: stop_id
+    boardings: avg_boardings
+    alightings: avg_alightings
+    lat: stop_lat
+    lon: stop_lon
+agg_basis: "daily"
+notes:
+    
