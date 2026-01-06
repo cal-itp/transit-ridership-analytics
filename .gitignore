@@ -3,3 +3,6 @@ transit_agency_ridership_raw_datasets/Riverside Transit/
 staging_stop_ridership.csv
 transit_agency_ridership_raw_datasets/Foothill Transit/
 GTFS/
+staging_ridership_output/
+staging_ridership_missing.xlsx
+foothill_transit_ridership_stop_name_added.csv
