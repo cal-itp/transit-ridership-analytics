@@ -6,3 +6,6 @@ GTFS/
 staging_ridership_output/
 staging_ridership_missing.xlsx
 foothill_transit_ridership_stop_name_added.csv
+big_blue_bus_not_matched.xlsx
+gold_coast_transit_not_matched.xlsx
+fact_ridership_output/
