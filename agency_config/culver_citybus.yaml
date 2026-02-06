@@ -11,5 +11,8 @@ column_mapping:
     "Stop Name": stop_name
     "AVG On": avg_boardings
     "AVG Off": avg_alightings
-agg_basis: "custom period"
+reporting_unit: "custom_period"
+ridership_measure: "avg_time_of_day"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "Data collected with Hella APCs and processed by UTA Transit. Data is undercount. Trips that were rejected by APC processing software are dropped. Data reported to NTD is factored to replace the rejected trips and is higher."

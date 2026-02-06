@@ -9,5 +9,8 @@ column_mapping:
     "Stop Name": stop_name
     "APC Boarding": avg_boardings
     "APC Alighting": avg_alightings
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: "daily"
+geographic_grain: "trip_stop"
+daily_ridership_basis: "reported_daily"
 notes: "2025/2/4 has highest boarding in Q1 2025. Stop id extracted from raw stop name."

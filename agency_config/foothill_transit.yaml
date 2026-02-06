@@ -9,6 +9,9 @@ column_mapping:
     alightings: avg_alightings
     lat: stop_lat
     lon: stop_lon
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: "daily"
+geographic_grain: "trip_stop"
+daily_ridership_basis: "reported_daily"
 notes:
     

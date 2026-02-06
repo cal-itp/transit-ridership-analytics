@@ -5,5 +5,8 @@ file_type: "xlsx"
 column_mapping:
     Route: route_id
     "Stop Name": stop_name
-agg_basis: "fiscal year"
+reporting_unit: "fiscal_year"
+ridership_measure: "total"
+geographic_grain: "stop"
+daily_ridership_basis: "calculated_avg_daily"
 notes: ""

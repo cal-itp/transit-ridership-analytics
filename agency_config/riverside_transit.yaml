@@ -10,5 +10,8 @@ column_mapping:
     Longitude: stop_lon
     Latitude: stop_lat
     ridership: avg_ridership
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: ""
+geographic_grain: "transaction"
+daily_ridership_basis: "derived_from_transactions"
 notes: ""

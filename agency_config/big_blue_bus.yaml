@@ -13,5 +13,8 @@ column_mapping:
     STOP_LON: stop_lon
     AVERAGE_DAILY_BOARDINGS: avg_boardings
     AVERAGE_DAILY_ALIGHTINGS: avg_alightings
-agg_basis: "service period"
+reporting_unit: "custom_period"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "Big Blue Bus implement three service that changes annually, referenced as SERVICE_PERIOD and named after the month they take effect in raw data. Each service lasts for approximately 4 months."

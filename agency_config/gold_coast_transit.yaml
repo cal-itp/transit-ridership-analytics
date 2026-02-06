@@ -9,6 +9,8 @@ column_mapping:
     total_off: avg_alightings
     lat: stop_lat
     lon: stop_lon
-agg_basis: "monthly"
+reporting_unit: "month"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "We received raw data for May and October, from 2018 to 2025. In first release we only import May 2025 data, which contains most clear and comprehensive columns/info."
-    

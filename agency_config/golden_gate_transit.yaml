@@ -9,5 +9,8 @@ column_mapping:
     STOP_NAME: stop_name
     BOARDINGS: avg_boardings
     ALIGHTINGS: avg_alightings
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: "daily"
+geographic_grain: "trip_stop"
+daily_ridership_basis: "reported_daily"
 notes: "The dataset includes stop-level ridership and virtual time point data. When POINT_ROLE = 'T', the entries do not contain boarding or alighting information."
