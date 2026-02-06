@@ -8,6 +8,9 @@ column_mapping:
     StopLabel: stop_name
     ProjectedBoarding: avg_boardings
     ProjectedAlighting: avg_alightings
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: "daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_daily"
 notes: "Dataset include most specific fixed route data. Data collected by Dilax APCs goes through trip matching process and projection process. Data provided is final projected boardings/alightings used for official reporting. 1.1% of trips locked by Dilax and unusable. No service on Thanksgiving and Christmas day. "
     

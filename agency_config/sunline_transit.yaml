@@ -9,5 +9,8 @@ column_mapping:
     "Longitude": stop_lon
     "Avg. Boards": avg_boardings
     "Avg. Alights": avg_alightings
-agg_basis: "fiscal year"
+reporting_unit: "fiscal_year"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: ""

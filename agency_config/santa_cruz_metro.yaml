@@ -7,5 +7,8 @@ column_mapping:
     "Stop Name": stop_name
     "Boardings": avg_boardings
     "Alightings": avg_alightings
-agg_basis: "custom period"
+reporting_unit: "fiscal_year"
+ridership_measure: "total"
+geographic_grain: "stop"
+daily_ridership_basis: "calculated_avg_daily"
 notes: "Several buses without APC hardware (5 in March and 8 in April 2025) didn't collect data. Clever Insights failed to collect APC data on all routes from 2025-06-16 to 2025-06-30. Each stop id has two rows (stop_name, stop_name [stop_id])"

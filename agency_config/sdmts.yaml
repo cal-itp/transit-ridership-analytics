@@ -10,5 +10,8 @@ column_mapping:
     "Direction Label": direction
     "Average On": avg_boardings
     "Average Off": avg_alightings
-agg_basis: "service period"
+reporting_unit: "custom_period"
+ridership_measure: "avg_daily"
+geographic_grain: "trip_stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "Data collected from APCs. Stop IDs consistent with GTFS Stop IDs over the same time."

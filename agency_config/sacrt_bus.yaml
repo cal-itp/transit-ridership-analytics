@@ -8,5 +8,8 @@ column_mapping:
     direction_id: direction
     average_boardings: avg_boardings
     average_alightings: avg_alightings
-agg_basis: "custom period"
+reporting_unit: "custom_period"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "GTFS-ride format."

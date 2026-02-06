@@ -14,6 +14,6 @@ avg_boardings: float
 avg_alightings: float
 avg_ridership: float
 day_type: string
-agg_basis: string
+daily_ridership_basis: string
 start_date: string
 end_date: string

@@ -10,5 +10,8 @@ column_mapping:
     "Lon": stop_lon
     "Ons": avg_boardings
     "Offs": avg_alightings
-agg_basis: "daily"
+reporting_unit: "day"
+ridership_measure: "daily"
+geographic_grain: "trip_stop"
+daily_ridership_basis: "reported_daily"
 notes: "APCs are not NTD-certified and has error rate above 5% threshold required by NTD. This is the only source for stop-level data at this time."

@@ -6,6 +6,9 @@ column_mapping:
     "Origin Station": stop_name
     "Date Type": day_type
     "Average Ridership": avg_ridership
-agg_basis: "monthly"
+reporting_unit: "month"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
 notes: "Ridership numbers are estimated based on sales data from the various methods passengers pay for Caltrain fares."
     
