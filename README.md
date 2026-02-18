@@ -52,7 +52,7 @@ A metadata table describing each agency-provided dataset collected in this round
 
 A standardized dataset integrating daily stop-level ridership records across agencies.
 
-**File:** `combined_daily_ridership.csv`
+**File:** `combined_daily_ridership.zip` (Unzip the file to get the `.csv` dataset)
 
 **Data Description:**
 
