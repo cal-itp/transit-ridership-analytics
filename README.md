@@ -93,12 +93,4 @@ This release is intended for
 - stop-level aggregation research
 - supporting future statewide data collection and integration
 
-This is an initial consolidation effort and should not be interpreted as an official statewide ridership benchmark,
-
-## Release Version
-
-Current version: `v1.0.0`
-
-Datasets are available under the Github Release section:
-
-[TODO]()
+This is an initial consolidation effort and should not be interpreted as an official statewide ridership benchmark.
