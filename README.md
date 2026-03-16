@@ -15,7 +15,7 @@ The initial release includes two output datasets:
 
 A metadata table describing each agency-provided dataset collected in this round of data collection.
 
-**File:** `metadata.csv`
+**File:** `ridership_dataset_metadata.csv`
 
 **Data Description:**
 
@@ -34,6 +34,7 @@ A metadata table describing each agency-provided dataset collected in this round
 | gtfs_url | The URL for the GTFS dataset used for matching and obtaining stop attributes for ridership datasets with missing fields. |
 | gtfs_snapshot_date | The date that the combination of organization, service and GTFS feed was present in the data warehouse. |
 | gtfs_dataset_name | The GTFS dataset name that used for  used for matching and obtaining stop attributes for ridership datasets with missing fields. |
+| stop_name_from_gtfs | Indicator for whether the stop name in the output ridership table are from GTFS data. |
 | stop_coords_from_gtfs | Indicator for whether the stop latitude and longitude in the output ridership table are from GTFS data. |
 | route_id_exists | Indicator for whether the agency-provided dataset includes a route ID field |
 | route_name_exists | Indicator for whether the agency-provided dataset includes a route name field |
@@ -52,7 +53,7 @@ A metadata table describing each agency-provided dataset collected in this round
 
 A standardized dataset integrating daily stop-level ridership records across agencies.
 
-**File:** `combined_daily_ridership.csv`
+**File:** `avg_daily_stop_ridership.csv`
 
 **Data Description:**
 
@@ -94,11 +95,6 @@ Details and data caveats can be found in the [report]().
 
 ## Intended Use
 
-This release is intended for 
-
-- exploratory analysis
-- data quality assessment
-- stop-level aggregation research
-- supporting future statewide data collection and integration
+This release is intended to support exploratory analysis, data quality assessment, stop-level ridership aggregation research and future statewide data collection and integration efforts. Because the source datasets vary in format, reporting period, level of detail and completeness, this dataset includes important caveats that may affect comparability and interpretation. We recommend that users review the accompanying report for details on data caveats and limitations before using the data for analysis.
 
 This is an initial consolidation effort and should not be interpreted as an official statewide ridership benchmark.
