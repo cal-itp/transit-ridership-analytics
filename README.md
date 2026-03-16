@@ -2,20 +2,19 @@
 
 This repository published sop-level ridership datasets collected from 19 California transit agencies that represent a significant share of statewide ridership.
 
-The purpose of this release is to
-- improve transparency of stop-level ridership data for public analysis and research
-- standardize heterogeneous formats of agency-provided datasets
-- support exploratory analysis toward a standardized stop-level ridership reporting format across agencies (such as TIDES)
+This release is intended to support exploratory analysis, data quality assessment, stop-level ridership aggregation research and future statewide data collection and integration efforts. Because the source datasets vary in format, reporting period, level of detail and completeness, this dataset includes important caveats that may affect comparability and interpretation. We recommend that users review the accompanying [report](https://github.com/cal-itp/transit-ridership-analytics/blob/main/Ridership%20Data%20Collection%20and%20Exploration%20Report%20-%20First%20Round.pdf) for details on data caveats and limitations before using the data for analysis.
+
+This is an initial consolidation effort and should not be interpreted as an official statewide ridership benchmark.
 
 ## Release Content
 
-The initial release includes two output datasets:
+The initial release includes two output datasets and one report:
 
 #### Dataset 1: Metadata Dataset
 
 A metadata table describing each agency-provided dataset collected in this round of data collection.
 
-**File:** `ridership_dataset_metadata.csv`
+**File:** [`ridership_dataset_metadata.csv`](https://github.com/cal-itp/transit-ridership-analytics/tree/main/data_output)
 
 **Data Description:**
 
@@ -53,7 +52,7 @@ A metadata table describing each agency-provided dataset collected in this round
 
 A standardized dataset integrating daily stop-level ridership records across agencies.
 
-**File:** `avg_daily_stop_ridership.csv`
+**File:** [`avg_daily_stop_ridership.csv`](https://github.com/cal-itp/transit-ridership-analytics/tree/main/data_output)
 
 **Data Description:**
 
@@ -79,7 +78,7 @@ A standardized dataset integrating daily stop-level ridership records across age
 
 #### Report
 
-**File:** `Ridership Data Collection and Exploration Report (First Round).pdf`
+**File:** [`Ridership Data Collection and Exploration Report (First Round).pdf`](https://github.com/cal-itp/transit-ridership-analytics/blob/main/Ridership%20Data%20Collection%20and%20Exploration%20Report%20-%20First%20Round.pdf)
 
 The report summarizes the data collection, processing workflow, key data caveats, and documentation for the output dataset.
 
@@ -91,10 +90,4 @@ The combined stop-level ridership dataset was derived from heterogeneous agency-
 2. Stop attributes enrichment. This addressed missing stop attributes in agency submissions by enriching records with stop IDs, stop names, and stop coordinates sourced from GTFS data. Enrichment was applied only where these fields were absent in the agency-provided datasets. Residual gaps remain where stops could not be confidently matched.
 3. Stop-level ridership production. This step aggregated ridership values for each agency, stop, day type and period. Only most recent time period was kept for each service/agency. A unique key was generated for each agency-stop-day type-period combination.
 
-Details and data caveats can be found in the report.
-
-## Intended Use
-
-This release is intended to support exploratory analysis, data quality assessment, stop-level ridership aggregation research and future statewide data collection and integration efforts. Because the source datasets vary in format, reporting period, level of detail and completeness, this dataset includes important caveats that may affect comparability and interpretation. We recommend that users review the accompanying report for details on data caveats and limitations before using the data for analysis.
-
-This is an initial consolidation effort and should not be interpreted as an official statewide ridership benchmark.
+Details and data caveats can be found in the [report](https://github.com/cal-itp/transit-ridership-analytics/blob/main/Ridership%20Data%20Collection%20and%20Exploration%20Report%20-%20First%20Round.pdf).
