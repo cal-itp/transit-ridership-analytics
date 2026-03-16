@@ -11,7 +11,7 @@ The purpose of this release is to
 
 The initial release includes two output datasets:
 
-### Dataset 1: Metadata Dataset
+#### Dataset 1: Metadata Dataset
 
 A metadata table describing each agency-provided dataset collected in this round of data collection.
 
@@ -48,11 +48,11 @@ A metadata table describing each agency-provided dataset collected in this round
 
 ---
 
-### Dataset 2: Combined Stop-Level Ridership
+#### Dataset 2: Combined Stop-Level Ridership
 
 A standardized dataset integrating daily stop-level ridership records across agencies.
 
-**File:** `combined_daily_ridership.zip` (Unzip the file to get the `.csv` dataset)
+**File:** `combined_daily_ridership.csv`
 
 **Data Description:**
 
@@ -66,15 +66,21 @@ A standardized dataset integrating daily stop-level ridership records across age
 | stop_name | Stop name (GTFS-mapped when agency didn’t provide) |
 | stop_lat | Stop latitude (GTFS-mapped when agency didn’t provide or agency-provided data have more than one set of lat/lon for one stop) |
 | stop_lon | Stop longitude (GTFS-mapped when agency didn’t provide or agency-provided data have more than one set of lat/lon for one stop) |
-| daily_boardings | Daily boardings for the stop and reporting period. The calculation basis is documented in daily_ridership_basis column. |
-| daily_alightings | Daily alightings for the stop and reporting period. The calculation basis is documented in daily_ridership_basis column. |
-| daily_ridership | Daily total ridership for the stop and reporting period. The calculation basis is documented in daily_ridership_basis column. |
+| avg_daily_boardings | Average daily boardings for the stop and reporting period. The method used to produce the average daily value is documented in avg_daily_method column. |
+| avg_daily_alightings |Average daily alightings for the stop and reporting period. The method used to produce the average daily value is documented in avg_daily_method column. |
+| avg_daily_ridership | Average daily total ridership for the stop and reporting period. The method used to produce the average daily value is documented in avg_daily_method column. |
 | day_type | Service day type associated with the ridership data (e.g., weekday, weekend, holiday, or all) |
-| daily_ridership_basis | Indicates how the daily stop-level boarding/alightings/ridership value was obtained from the raw data, e.g., reported directly, reported as an average, calculated from totals, or derived from transactions |
-| start_date | Start date of the ridership reporting period |
-| end_date | End date of the ridership reporting period |
+| avg_daily_method | Indicates the method used to produce the average daily value. Possible values <br>- avg_from_daily: calculated from daily-level ridership records in the corresponding period; <br>- avg_from_total: calculated by dividing a reported total ridership by the number of days in the corresponding period; <br>- reported_avg: average daily ridership was provided directly in the source data  |
+| start_date | Start date of the time period rerpesented by the record. |
+| end_date | End date of the time period rerpesented by the record. |
 
 ---
+
+#### Report
+
+**File:** `Ridership Data Collection and Exploration Report (First Round).pdf`
+
+The report summarizes the data collection, processing workflow, key data caveats, and documentation for the output dataset.
 
 ## Data Processing Overview
 
@@ -82,7 +88,9 @@ The combined stop-level ridership dataset was derived from heterogeneous agency-
 
 1. Data ingest and schema standardization. Minimal transformations necessary were applied to standardize the inputs into a consistent long-format with a shared schema and daily ridership granularity.
 2. Stop attributes enrichment. This addressed missing stop attributes in agency submissions by enriching records with stop IDs, stop names, and stop coordinates sourced from GTFS data. Enrichment was applied only where these fields were absent in the agency-provided datasets. Residual gaps remain where stops could not be confidently matched.
-3. Stop-level ridership production. This step aggregated ridership values for each agency, stop, day type and period. A unique key was generated for each agency-stop-day type-period combination.
+3. Stop-level ridership production. This step aggregated ridership values for each agency, stop, day type and period. Only most recent time period was kept for each service/agency. A unique key was generated for each agency-stop-day type-period combination.
+
+Details and data caveats can be found in the [report]().
 
 ## Intended Use
 
