@@ -91,7 +91,7 @@ The combined stop-level ridership dataset was derived from heterogeneous agency-
 2. Stop attributes enrichment. This addressed missing stop attributes in agency submissions by enriching records with stop IDs, stop names, and stop coordinates sourced from GTFS data. Enrichment was applied only where these fields were absent in the agency-provided datasets. Residual gaps remain where stops could not be confidently matched.
 3. Stop-level ridership production. This step aggregated ridership values for each agency, stop, day type and period. Only most recent time period was kept for each service/agency. A unique key was generated for each agency-stop-day type-period combination.
 
-Details and data caveats can be found in the [report]().
+Details and data caveats can be found in the report.
 
 ## Intended Use
 
