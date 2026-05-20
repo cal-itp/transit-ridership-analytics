@@ -1,0 +1,15 @@
+organization_name: "Sacramento Regional Transit District"
+service_name: "Sacramento Regional Transit District Bus"
+file_path: "transit_agency_ridership_preprocessed_datasets/sacrt_bus_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    route_id: route_id
+    route_long_name: route_name
+    direction_id: direction
+    average_boardings: avg_boardings
+    average_alightings: avg_alightings
+reporting_unit: "custom_period"
+ridership_measure: "avg_daily"
+geographic_grain: "stop"
+daily_ridership_basis: "reported_avg_daily"
+notes: "GTFS-ride format."

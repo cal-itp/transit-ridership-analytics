@@ -1,0 +1,17 @@
+organization_name: "Riverside Transit Agency"
+service_name: "Riverside Transit"
+file_path: "transit_agency_ridership_preprocessed_datasets/riverside_transit_ridership.xlsx"
+file_type: "xlsx"
+column_mapping:
+    "Stop ID": stop_id
+    "Stop Name": stop_name
+    Route: route_id
+    Direction: direction
+    Longitude: stop_lon
+    Latitude: stop_lat
+    ridership: avg_ridership
+reporting_unit: "day"
+ridership_measure: ""
+geographic_grain: "transaction"
+daily_ridership_basis: "derived_from_transactions"
+notes: ""
