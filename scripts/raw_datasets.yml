@@ -1,0 +1,52 @@
+bart:
+- "Entries and Exits by Station Oct 24 to Sept 25.xlsx"
+- "Ridership_202501.xlsx"
+big_blue_bus:
+- "CADOT_REQ_AVG_RIDERSHIP BY ROUTE AND STOP (DATAVIEW).xlsx"
+caltrain:
+- "Caltrain Average Ridership Estimates - Origin Station Detail (as of August 2025).xlsx"
+- "Caltrain Monthly Ridership Estimates (as of August 2025).xlsx"
+city_of_fresno:
+- "Daily Stop Level Data 9.1.24 - 8.31.25.xlsx"
+culver_city_bus:
+- "Ridership by Time Period, Route, and Stop_7_14_25-8_25_25.csv"
+- "Ridership by Trip_7_14_25-8_26_25.csv"
+gold_coast_transit:
+- "Longitudinal Stop Ridership Data.xls"
+golden_gate_park_shuttle:
+- "GGPshuttle_RidershipFY25.xlsx"
+golden_gate_transit:
+- "RidershipPerStop_September2025.csv"
+long_beach_transit:
+- "FY25_LBT_StopLevelRidership_CalITP.xlsx"
+octa:
+- "20250204_StopLevelBoarding.xlsx"
+- "2025Q1_AvgDailyBoarding.xlsx"
+omnitrans:
+- "Ridership Data_DOT request.xlsx"
+sbmtd:
+- "SBMTD Stop and Route Level Ridership Nov 1 2024 to Oct 31 2025 - date_fixed.xlsx"
+sdmts:
+- "MTS Ridership(MTS Bus All Days).csv"
+- "MTS Ridership(MTS Trolley All Days).csv"
+- "monthly-ridership-202412.xlsx"
+sacrt:
+- "ridership.txt.csv"
+- "routes.txt.csv"
+- "stops.txt.csv"
+samtrans:
+- "data_Aug 01-04.xlsx"
+- "data_Aug 05-08.xlsx"
+- "data_Aug 09-12.xlsx"
+- "data_Aug 13-16.xlsx"
+- "data_Aug 17-20.xlsx"
+- "data_Aug 21-24.xlsx"
+- "data_Aug 25-28.xlsx"
+- "data_Aug 29-31.xlsx"
+santa_cruz_metro:
+- "FY25 Ridership by Stop - Dec 19, 2024 - March12, 2025.xlsx"
+- "FY25 Ridership by Stop - Mar 13,2025 - June 30, 2025.xlsx"
+- "FY25 Ridership by Stop_July 1, 2024-Sept 11, 2024 .xlsx"
+- "FY25 Ridership by Stop_Sept 12, 2024-Dec 18,2024.xlsx"
+sunline_transit:
+- "Ridership Data by stop (APC).xlsx"
