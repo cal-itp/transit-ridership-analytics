@@ -10,7 +10,7 @@
 ## Data Cleaning
 1. Each individual transit agency's file gets put together (`Preprocess.ipynb`). Schema, number of files, how to put together all differ. --> second round might be more set schema
    * indiv transit agencies will need their data cleaned separately (ingest + clean for each agency)
-   * currently saved out as xlsx -> switch to parquets in GCS (`raw`)
+   * currently saved out as xlsx -> switch to parquets in GCS (`raw`, designate suffix for `_round1`, `_round2` so all inputs from agency across multiple years can share the same folder)
    * next step joins with GTFS, and here, it'd be helpful to map the schedule name as a column
 2. There is deeper cleaning on stop_ids and strings to prepare for joining with GTFS.
    * This step can be isolated conceptually, because values get overwritten to use with another data source
