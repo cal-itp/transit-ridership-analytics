@@ -5,9 +5,7 @@ Join raw data and station crosswalk tables to get full station name.
 """
 import gcsfs
 import pandas as pd
-from shared_vars import RAW_GCS, AGENCY_TO_GTFS_NAME_DICT, RAW_DATA_YAML
-
-LOCAL_FOLDER = "../transit_agency_ridership_raw_datasets2/"
+from shared_vars import LOCAL_FOLDER, RAW_GCS, AGENCY_TO_GTFS_NAME_DICT, RAW_DATA_YAML
 
 def ingest_bart_entries_and_exits(
     agency_name: str = "bart",

@@ -2,6 +2,7 @@
 # pd.read_excel() engines aren't working with GCS
 clean_transit_data:
 	python clean_bart.py
+	python clean_big_blue_bus.py
 
 upload_transit_data:
 	python upload_raw_excel_to_gcs.py
