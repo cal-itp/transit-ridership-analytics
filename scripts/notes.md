@@ -2,7 +2,9 @@
 ## Data Ingest
 1. Transit agencies share files, lots of different names, number of files.
 2. Local (files shared by email, etc) -> GCS (`transit_agency_raw`)
-   * To facilitate upload and use same keys as the yaml, `git mv Big\ Blue\ Bus/ big_blue_bus/`...repeat throughout to rename all the folders
+   * To facilitate upload and use same keys as the yaml, `git mv Big\ Blue\ Bus/ big_blue_bus/`...repeat throughout to rename all the folders. Handled the nested folders, made it hard to upload at once.
+   * Next round, folders can match keys, no nesting, match the GCS folder structure to start.
+   * Foothill is not checked in, will need to be added to yaml
 4. Add Makefile
 
 ## Data Cleaning
