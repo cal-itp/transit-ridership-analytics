@@ -10,6 +10,7 @@ mapclassify (>=2.8.0,<3)
 movingpandas==0.22.4
 numba (>=0.62.1, <0.63.0)
 omegaconf==2.3.0 # better yaml configuration
+openpyxl>=3.1.0
 polars==1.22.0
 quarto==0.1.0
 quarto-cli==1.6.40

@@ -9,7 +9,7 @@ PROCESSED_GCS = f"{GCS_FILE_PATH}processed/"
 
 RAW_DATA_YAML_PATH = Path("raw_datasets.yml")
 
-with open(RAW_DATA_YAML) as f:
+with open(RAW_DATA_YAML_PATH) as f:
     RAW_DATA_YAML = yaml.safe_load(Path(RAW_DATA_YAML_PATH).read_text())
 
 # Map the existing agency names "City of Fresno", "BART" to the schedule_name that is used in warehouse
