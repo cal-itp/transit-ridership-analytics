@@ -21,7 +21,7 @@ AGENCY_TO_GTFS_NAME_DICT = {
 	"fresno_area_express": "Fresno Schedule", # or is it Fresno County Schedule
 	"culver_citybus": "Culver City Schedule",
 	"foothill_transit": "Foothill Schedule",
-	"gold_coast_transit": ,# TODO find entry
+	"gold_coast_transit": "Gold Coast Schedule",
 	"golden_gate_park_shuttle": "Bay Area 511 Golden Gate Park Shuttle Schedule",
 	"golden_gate_transit": "Bay Area 511 Golden Gate Transit Schedule",
 	"long_beach_transit": "Long Beach Schedule",
