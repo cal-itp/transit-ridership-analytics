@@ -28,6 +28,7 @@ AGENCY_TO_GTFS_NAME_DICT = {
 	"long_beach_transit": "Long Beach Schedule",
 	"octa": "OCTA Schedule",
 	"omnitrans": "OmniTrans Schedule",
+    "riverside_transit": "Riverside Schedule",
 	"sbmtd": "SBMTD Schedule",
 	"sdmts": "San Diego Schedule",
 	"sacrt": "Sacramento Schedule",
