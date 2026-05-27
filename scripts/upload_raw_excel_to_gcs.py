@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
 	# This is where the datasets are uploaded locally 
 	# Switch for round 2 (this folder will not exist in GitHub after round 1)
-	LOCAL_FOLDER = Path("../transit_agency_ridership_raw_datasets/")
+	LOCAL_FOLDER = Path("../transit_agency_ridership_raw_datasets2/")
 
 	# Loop through each operator and upload the file into its own folder
 	for one_operator_name in list(raw_data_dict.keys()):
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 			gcs_file = f"{AGENCY_GCS}{one_operator_name}/{one_file}"
 			#print(f"{local_file} is uploaded as {gcs_file}")
 			
-			fs.put(local_file, gcs_file)
+			fs.put_file(local_file, gcs_file)
 			
 		print(f"uploaded {one_operator_name}")
 		
