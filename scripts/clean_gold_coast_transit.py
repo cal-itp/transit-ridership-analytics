@@ -34,7 +34,7 @@ def ingest_gold_coast_transit(
         schedule_name = AGENCY_TO_GTFS_NAME_DICT[agency_name]
     ).astype({
         "route": "str", # this gave error with parquet export because some looked like int
-        "unknown": "int"# this might be stop_sequence
+        "unknown": "int" # this might be stop_sequence
     })
 
     return raw_gct_export
