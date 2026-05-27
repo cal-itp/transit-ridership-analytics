@@ -31,10 +31,8 @@ def get_day_type(date):
 	holidays = cal.holidays(start='2020-01-01', end='2025-12-31')
     
 	if date in holidays:
-        return "holiday"
-    elif date.weekday() < 5:
-        return "weekday"
-    else:
-        return "weekend"
-
-
+		return "holiday"
+	elif date.weekday() < 5:
+		return "weekday"
+	else:
+		return "weekend"

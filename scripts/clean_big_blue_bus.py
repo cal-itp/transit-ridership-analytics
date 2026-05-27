@@ -33,7 +33,7 @@ if __name__ == "__main__":
     agency_name = "big_blue_bus"
     raw_big_blue_bus_export = ingest_big_blue_bus(agency_name)
     raw_big_blue_bus_export.to_parquet(
-        f"{RAW_GCS}/{agency_name}/ridership_round1.parquet",
+        f"{RAW_GCS}{agency_name}/ridership_round1.parquet",
         filesystem = gcsfs.GCSFileSystem()
     )
 	
