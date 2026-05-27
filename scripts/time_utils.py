@@ -7,6 +7,9 @@ import pandas as pd
 from datetime import date, timedelta, datetime
 from pandas.tseries.holiday import USFederalHolidayCalendar
 
+# get holidays
+cal = USFederalHolidayCalendar()
+holidays = cal.holidays(start='2020-01-01', end='2025-12-31')
 
 def get_fiscal_year_range(fiscal_year: int, start_month: int):
     # given fiscal year and start month, return the start and end date of the fiscal year
@@ -26,10 +29,7 @@ def get_fiscal_year_range(fiscal_year: int, start_month: int):
         
 
 def get_day_type(date):
-	# get holidays
-	cal = USFederalHolidayCalendar()
-	holidays = cal.holidays(start='2020-01-01', end='2025-12-31')
-    
+
 	if date in holidays:
 		return "holiday"
 	elif date.weekday() < 5:
