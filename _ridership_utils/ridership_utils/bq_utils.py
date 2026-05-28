@@ -7,7 +7,9 @@ import geopandas as gpd
 import google.auth
 import pandas as pd
 import pandas_gbq
-from gtfs_curator_shared_utils import geography_utils
+
+from google.cloud import bigquery
+from ridership_utils import geography_utils
 
 credentials, project = google.auth.default()
 
@@ -119,5 +121,15 @@ def download_table_custom_filter(
     if geom_col is not None:
 
         df = geography_utils.convert_to_gdf(df, geom_col, geom_type)
+
+    return df
+
+def bq_faster_download(sql_query: str) -> pd.DataFrame:
+    """ """
+    client = bigquery.Client(credentials=credentials)
+
+    query_job = client.query(sql_query)
+
+    df = query_job.result().to_dataframe()
 
     return df
