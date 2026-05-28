@@ -1,0 +1,103 @@
+"""
+Riverside Transit
+Aggregate swipe/transaction level data to stop level ridership
+
+Note: The original raw datasets are transactions data, which are too large to directly upload to Github. 
+The code in this section preprocess the raw data and aggregate to stop level ridership. 
+Raw datasets are not uploaded to Github repo. 
+Lat and lon for each (stop, route, direction) are the max/min of all records for the corresponding combination.
+"""
+import gcsfs
+import pandas as pd
+
+import time_utils
+from shared_vars import LOCAL_FOLDER, RAW_GCS, AGENCY_TO_GTFS_NAME_DICT, RAW_DATA_YAML
+
+def aggregate_transactions_to_ridership(transactions_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    extract only valid transaction types (values not in the list are the meta data rows)
+    """
+    ridership_transaction_codes = [
+        "114 - Stored ride card", 
+        "115 - Period pass", "119 - Got fare", 
+        "129 - Special card", "212 - Mobile Ticket Transaction"
+    ]
+    
+    raw_riverside = transactions_df[transactions_df["Transaction Type"].isin(ridership_transaction_codes)]
+
+    raw_riverside["date"] = pd.to_datetime(raw_riverside["Date Time"], errors="coerce").dt.date
+    raw_riverside["date"] = pd.to_datetime(raw_riverside["date"], errors="coerce")
+    
+    raw_riverside_export = (
+        raw_riverside
+        .groupby(["date", "Stop ID", "Route", "Direction"], as_index=False, dropna=False)
+        .agg({
+            "Stop ID": "count",
+            "Longitude": "max",
+            "Latitude": "max"
+        })
+        .rename(columns = {"Stop ID": "ridership"})
+    )
+
+    return raw_riverside_export
+
+
+def filter_transactions(filename: str) -> pd.DataFrame:
+    """
+    Find the index of the first "Search Criteria" row and drop all following rows which are not ridership data.
+    Clean up the filtered transactions to get ridership
+    """
+    t_raw_df = pd.read_csv(filename, header=4)
+            
+    first_col = t_raw_df.columns[0]
+    mask = t_raw_df[first_col].astype(str).str.contains("Search Criteria")
+    if mask.any():
+        cutoff_idx = mask.idxmax()
+        t_raw_df = t_raw_df.loc[:cutoff_idx-1]
+
+    # Coerce dtypes here because we're saving out filtered transactions too.
+    # these dtypes should match what we'll use for transactions -> stop ridership  
+    t_raw_df = t_raw_df.astype({
+        "Route": "int",
+        "Stop ID": "int"
+    })
+
+    return t_raw_df
+
+def ingest_riverside_transit(
+    agency_name: str = "riverside_transit"
+) -> pd.DataFrame:
+    """
+    """
+    list_of_files = list(RAW_DATA_YAML[agency_name])
+
+    filtered_raw_transactions = pd.concat([
+        filter_transactions(f"{LOCAL_FOLDER}{agency_name}/{filename}") 
+        for filename in list_of_files 
+    ], axis=0, ignore_index=True)
+
+    # this needs to be uploaded too
+    filtered_raw_transactions.to_parquet(
+        f"{RAW_GCS}{agency_name}/filtered_transactions_round1.parquet",
+        filesystem = gcsfs.GCSFileSystem()
+    )
+
+    raw_riverside_export = aggregate_transactions_to_ridership(filtered_raw_transactions)
+    raw_riverside_export["start_date"] = raw_riverside_export["date"]
+    raw_riverside_export["end_date"] = raw_riverside_export["date"]
+    raw_riverside_export["day_type"] = raw_riverside_export["date"].apply(time_utils.get_day_type)
+    raw_riverside_export["schedule_name"] = AGENCY_TO_GTFS_NAME_DICT[agency_name]
+       
+    return raw_riverside_export
+    
+
+if __name__ == "__main__":
+   
+    agency_name = "riverside_transit"
+    raw_riverside_export = ingest_riverside_transit(agency_name)
+    raw_riverside_export.to_parquet(
+        f"{RAW_GCS}{agency_name}/ridership_round1.parquet",
+        filesystem = gcsfs.GCSFileSystem()
+    )
+	
+    print(f"exported: {agency_name}")

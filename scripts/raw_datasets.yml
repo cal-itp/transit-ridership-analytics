@@ -6,11 +6,11 @@ big_blue_bus:
 caltrain:
 - "Caltrain Average Ridership Estimates - Origin Station Detail (as of August 2025).xlsx"
 - "Caltrain Monthly Ridership Estimates (as of August 2025).xlsx"
-city_of_fresno:
-- "Daily Stop Level Data 9.1.24 - 8.31.25.xlsx"
-culver_city_bus:
+culver_citybus:
 - "Ridership by Time Period, Route, and Stop_7_14_25-8_25_25.csv"
 - "Ridership by Trip_7_14_25-8_26_25.csv"
+fresno_area_express:
+- "Daily Stop Level Data 9.1.24 - 8.31.25.xlsx"
 gold_coast_transit:
 - "Longitudinal Stop Ridership Data.xls"
 golden_gate_park_shuttle:
