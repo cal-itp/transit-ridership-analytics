@@ -81,7 +81,7 @@ def ingest_santa_cruz_metro(
     )
 
     raw_scm_export = raw_scm_export.groupby(
-        by=["Stop Name", "Stop ID", "start_date", "end_date"], dropna=False
+        by=["Stop Name", "Stop ID", "start_date", "end_date", "schedule_name"], dropna=False
     ).agg({
         "Boardings": "sum", 
         "Alightings": "sum"
