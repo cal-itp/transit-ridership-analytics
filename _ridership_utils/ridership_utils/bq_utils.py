@@ -40,6 +40,10 @@ def list_as_string(list_of_columns: list) -> str:
     columns_written_out = ", ".join(list_of_columns)
     return columns_written_out
 
+def list_of_strings_as_string(list_of_items: list) -> str:
+    items_written_out = "', '".join(list_of_items)
+    
+    return items_written_out
 
 def add_sql_date_filter(date_col: str, start_date: str, end_date: str) -> str:
     """
@@ -66,9 +70,13 @@ def download_table(
     Coerce datetime column and convert to gdf if needed.
     """
     basic_query = basic_sql_query(project_name, dataset_name, table_name)
-    where_condition = add_sql_date_filter(date_col, start_date, end_date)
-    sql_query_statement = f"{basic_query} WHERE {where_condition}"
+    date_condition = add_sql_date_filter(date_col, start_date, end_date)
 
+    if (date_col is None) and (date_condition != ""):
+        sql_query_statement = f"{basic_query} WHERE {date_condition}"
+    if (date_col is None) and (date_condition == ""):   
+        sql_query_statement = basic_query
+    
     if date_col is None:
         df = pandas_gbq.read_gbq(basic_query, project_id=project_name, dialect="standard", credentials=credentials)
 
@@ -107,10 +115,14 @@ def download_table_custom_filter(
     basic_query = basic_sql_query(project_name, dataset_name, table_name, columns)
     date_condition = add_sql_date_filter(date_col, start_date, end_date)
     
-    if date_col is None:
+    if (date_col is None) and (custom_filter_statement != ""):
         sql_query_statement = f"{basic_query} WHERE {custom_filter_statement}"
-    if custom_filter_statement != "":
+    if (date_col is None) and (custom_filter_statement == ""):   
+        sql_query_statement = basic_query
+    if (date_col is not None) and (custom_filter_statement != ""):
         sql_query_statement = f"{basic_query} WHERE {date_condition} AND {custom_filter_statement}"
+    if (date_col is not None) and (custom_filter_statement == ""):
+        sql_query_statement = f"{basic_query} WHERE {date_condition}"
 
     df = pandas_gbq.read_gbq(
         sql_query_statement, project_id=project_name, dialect="standard", credentials=credentials
