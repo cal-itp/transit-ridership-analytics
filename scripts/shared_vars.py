@@ -19,7 +19,7 @@ with open(RAW_DATA_YAML_PATH) as f:
 # GTFS stop data comes in feeds, which use schedule_name
 AGENCY_TO_GTFS_NAME_DICT = {
     "bart": "Bay Area 511 BART Schedule",
-    "big_blue_bus": "Big Blue Bus Schedule",
+    "big_blue_bus": "Big Blue Bus Swiftly Schedule",
     "caltrain": "Bay Area 511 Caltrain Schedule",
 	"fresno_area_express": "Fresno Schedule", # or is it Fresno County Schedule
 	"culver_citybus": "Culver City Schedule",
