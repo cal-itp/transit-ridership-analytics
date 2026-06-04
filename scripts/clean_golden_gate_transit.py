@@ -1,6 +1,5 @@
 """
 Golden Gate Transit
-Aggregate to stop level. The raw data has trip-stop grain.
 """
 import gcsfs
 import pandas as pd
@@ -12,6 +11,8 @@ def ingest_golden_gate_transit(
     agency_name: str = "golden_gate_transit",
 ) -> pd.DataFrame:
     """
+    Import Golden Gate csv.
+    Aggregate to stop level. The raw data has trip-stop grain.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -34,7 +35,35 @@ def ingest_golden_gate_transit(
     
     return raw_ggt_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "ROUTE": "route_id",
+        "DIRECTION": "direction",
+        "STOP_NUMBER": "stop_id",
+        "STOP_NAME": "stop_name",
+        "BOARDINGS": "avg_boardings",
+        "ALIGHTINGS": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "trip_stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "golden_gate_transit"
