@@ -1,7 +1,5 @@
 """
 Caltrain
-Unmerge first column "Month, Year of Date", and rename columns.
-Add start and end date for each period.
 """
 import gcsfs
 import pandas as pd
@@ -11,6 +9,9 @@ def ingest_caltrain(
     agency_name: str = "caltrain"
 ) -> pd.DataFrame:
     """
+    Import Caltran Excel.
+    Unmerge first column "Month, Year of Date", and rename columns.
+    Add start and end date for each period.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -41,7 +42,32 @@ def ingest_caltrain(
 
     return raw_caltrain
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Origin Station": "stop_name",
+        "Date Type": "day_type",
+        "Avg Ridership": "avg_ridership",
+    }
+    
+    df = df.assign(
+        reporting_unit = "month",
+        ridership_measure = "avg_daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "caltrain"

@@ -11,6 +11,10 @@ from shared_vars import AGENCY_GCS, LOCAL_FOLDER, RAW_DATA_YAML
 fs = gcsfs.GCSFileSystem()
 
 def upload_files_from_local_to_gcs(raw_data_dict: dict):
+    """
+    Upload the files listed in `raw_datasets.yml`
+    from local to GCS bucket.
+    """
     for one_operator_name in list(raw_data_dict.keys()):
         
         print(f"start {one_operator_name}")
@@ -29,6 +33,10 @@ def upload_files_from_local_to_gcs(raw_data_dict: dict):
     return
 
 def download_files_from_gcs(raw_data_dict: dict):
+    """
+    Download the files listed in `raw_datasets.yml`
+    from GCS bucket to local.
+    """
     for one_operator_name in list(raw_data_dict.keys()):
         print(f"start {one_operator_name}")
 
@@ -50,6 +58,6 @@ if __name__ == "__main__":
 	# datasets collected in round 1
 
 	# Loop through each operator and upload the file into its own folder
-	#upload_files_from_local_to_gcs(RAW_DATA_YAML)
-    download_files_from_gcs(RAW_DATA_YAML)
+	upload_files_from_local_to_gcs(RAW_DATA_YAML)
+    #download_files_from_gcs(RAW_DATA_YAML)
 		
