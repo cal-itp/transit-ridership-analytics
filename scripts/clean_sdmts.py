@@ -1,9 +1,5 @@
 """
 San Diego MTS
-
-Agg to stop level. The raw data is avg ridership for each trip-stop.
-Note: Same stop ID can have more than on Stop Sequence in this dataset. In agg, stop sequence is not included.
-
 """
 import gcsfs
 import pandas as pd
@@ -13,6 +9,11 @@ def ingest_sdmts(
     agency_name: str = "sdmts"
 ) -> pd.DataFrame:
     """
+    Import only the bus and trolley Excel.
+    
+    Agg to stop level. The raw data is avg ridership for each trip-stop.
+    Note: Same stop ID can have more than on Stop Sequence in this dataset. 
+    In agg, stop sequence is not included.
     """
     list_of_files = list(RAW_DATA_YAML[agency_name][:2])
     
@@ -49,7 +50,36 @@ def ingest_sdmts(
 
     return raw_mts_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Route": "route_id",
+        "Route Name": "route_name",
+        "Direction Label": "direction",
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "Average On": "avg_boardings",
+        "Average Off": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "custom_period",
+        ridership_measure = "avg_daily",
+        geography_grain: "trip_stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "sdmts"

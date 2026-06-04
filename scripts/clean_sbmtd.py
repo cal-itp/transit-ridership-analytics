@@ -1,7 +1,6 @@
 """
 Santa Barbara Metropolitan Transit District
-1. Reformat to long format
-2. Average from monthly to daily
+
 """
 import gcsfs
 import pandas as pd
@@ -12,6 +11,7 @@ def process_individual_sheet(
     sheet_name: str
 ) -> pd.DataFrame:
     """
+    1. Reformat to long format
     """
     t_df_sbmtd = pd.read_excel(filename, sheet_name=sheet_name, header=2, engine="openpyxl")
     
@@ -39,6 +39,7 @@ def ingest_sbmtd(
     agency_name: str = "sbmtd"
 ) -> pd.DataFrame:
     """
+    2. Average from monthly to daily
     """
     filename = RAW_DATA_YAML[agency_name][0]
     sheet_names = ["Ridership by Stop_Boardings", "Ridership by Stop_Alightings", "Ridership by Stop_Total Act."]
@@ -58,7 +59,32 @@ def ingest_sbmtd(
     
     return raw_sbmtd
     
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        # avg_boardings, avg_alightings, avg_ridership already calculated
+    }
 
+    df = df.assign(
+        reporting_unit = "month",
+        ridership_measure = "total",
+        geography_grain: "stop",
+        daily_ridership_basis = "calculated_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "sbmtd"

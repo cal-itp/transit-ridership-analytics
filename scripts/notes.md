@@ -18,6 +18,7 @@
    * next step joins with GTFS, and here, it'd be helpful to map the schedule name as a column
 2. There is deeper cleaning on stop_ids and strings to prepare for joining with GTFS.
    * This step can be isolated conceptually, because values get overwritten to use with another data source
+   * Transit agency's stop lat/lon sometimes is provided. There is deduping and keeping max. Should it matter, if we're bringing in GTFS? 
    * Indiv agencies combined into 1 parquet here (`intermediate`)
 3. Add to Makefile
    

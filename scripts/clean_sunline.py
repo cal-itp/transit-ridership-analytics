@@ -11,6 +11,8 @@ from shared_vars import LOCAL_FOLDER, RAW_GCS, AGENCY_TO_GTFS_NAME_DICT, RAW_DAT
 
 def parse_ridership_columns(ridership_columns: list) -> pd.DataFrame:
     """
+    Parse ridership columns, which appear as 3 rows,
+    into values we will use for long df.
     """
     meta = []
     for top, mid, bottom in ridership_columns:
@@ -97,10 +99,10 @@ def ingest_sunline_transit(
     ).reset_index()
 
     # all of these have characters that need to be parsed first. then set dtype
-    for col in ["APC Alights", "APC Boards", "Avg. Alights", "Avg. Boards"]:
-        raw_sunline_export[col] = pd.to_numeric(
+    for c in ["APC Alights", "APC Boards", "Avg. Alights", "Avg. Boards"]:
+        raw_sunline_export[c] = pd.to_numeric(
                                     raw_sunline_export.apply(
-                                        lambda x: str(x[col]).strip().replace('-', '').replace('nan', ''), 
+                                        lambda x: str(x[c]).strip().replace('-', '').replace('nan', ''), 
                                         axis= 1)
                                     )
     
@@ -117,8 +119,37 @@ def ingest_sunline_transit(
     })
     
     return raw_sunline_export
-    
 
+    
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "Latitude": "stop_lat",
+        "Longitude": "stop_lon",
+        "Avg. Boards": "avg_boardings",
+        "Avg. Alights": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "fiscal_year",
+        ridership_measure = "avg_daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "sunline_transit"

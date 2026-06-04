@@ -1,13 +1,8 @@
 """
 SacRT
 
-1. Join ridership and stops table
-2. Differentiate weekday and weekend ridership
-Note: For the routes that run on weekends, weekends are included in the agg counts. 
-For the routes that don't run on weekends, only weekdays are included in agg conuts. 
-See the indicator columns from Monday to Sunday.
-
-snakecase could be a way to clean columns for all transit agencies, adjust rest of scripts too
+snakecase could be a way to clean columns for all transit agencies, 
+adjust rest of scripts too
 """
 import gcsfs
 import pandas as pd
@@ -19,6 +14,7 @@ def ingest_sacrt_ridership(
     filename: str = "ridership.txt.csv"
 ) -> pd.DataFrame:
     """
+    Import SacRT's ridership file.
     """    
     raw_sacrt_ridership = pd.read_csv(
         f"{LOCAL_FOLDER}{agency_name}/{filename}", 
@@ -50,8 +46,10 @@ def ingest_sacrt_ridership(
 def ingest_sacrt_stops(
     agency_name: str = "sacrt",
     filename: str = "stops.txt.csv"
-):
-
+) -> pd.DataFrame:
+    """
+    Import SacRT's stops file.
+    """
     raw_sacrt_stops = pd.read_csv(f"{LOCAL_FOLDER}{agency_name}/{filename}")
     raw_sacrt_stops = raw_sacrt_stops.dropna(how="all")
     raw_sacrt_stops['stop_id'] = raw_sacrt_stops['stop_id'].astype("int64")
@@ -64,7 +62,10 @@ def ingest_sacrt_stops(
 def ingest_sacrt_routes(
     agency_name: str = "sacrt",
     filename: str = "routes.txt.csv"
-):
+) -> pd.DataFrame:
+    """
+    Import SacRT's routes file.
+    """
 	raw_sacrt_routes = pd.read_csv(f"{LOCAL_FOLDER}{agency_name}/{filename}")
 	raw_sacrt_routes = raw_sacrt_routes.dropna(how="all")
 	raw_sacrt_routes['route_type'] = raw_sacrt_routes['route_type'].astype("int64")
@@ -77,7 +78,13 @@ def merge_ridership_with_stop_and_routes(
 	stop_df: pd.DataFrame,
 	routes_df: pd.DataFrame
 ) -> pd.DataFrame:
-	
+	"""
+    1. Join ridership and stops table
+    2. Differentiate weekday and weekend ridership
+    Note: For the routes that run on weekends, weekends are included in the agg counts. 
+    For the routes that don't run on weekends, only weekdays are included in agg conuts. 
+    See the indicator columns from Monday to Sunday.
+    """
 	raw_sacrt_export = pd.merge(
 		ridership_df, 
 		stop_df, 
@@ -101,7 +108,35 @@ def merge_ridership_with_stop_and_routes(
 	)
 
 	return raw_sacrt_export
-	
+
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    # SacRT bus and light rail were split apart, here, there's only bus, get light rail named too
+    RENAME_COLS_DICT = {
+        "route_long_name": "route_name",  # route_long_name is useful because it's in dim_routes, fct_scheduled_trips, etc
+        "direction_id": "direction",
+        "average_boardings": "avg_boardings",
+        "average_alightings": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "custom_period",
+        ridership_measure = "avg_daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "sacrt"
