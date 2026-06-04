@@ -36,3 +36,21 @@ def get_day_type(date):
 		return "weekday"
 	else:
 		return "weekend"
+
+def calculate_time_overlap(
+    t1_start: datetime, 
+    t1_end: datetime, 
+    t2_start: datetime, 
+    t2_end:datetime,
+) -> float:
+    """
+    Be able to find the overlap (in days) between 
+    ridership_start/end and GTFS schedule feed_key's service_date_start/end.
+    """
+    overlap_timedelta = max(
+        timedelta(0), 
+        min(t1_end, t2_end) - max(t1_start, t2_start)
+    )
+
+    overlap_days = overlap_timedelta.total_seconds() / (3_600 * 24)
+    return overlap_days
