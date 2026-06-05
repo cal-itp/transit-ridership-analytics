@@ -1,9 +1,5 @@
 """
 OmniTrans
-
-Average to daily. Raw data is total ridership over each fiscal year.
-Add date according to fiscal year, i.e., first day of the fiscal year.
-Note: For each Stop Name, there can be multiple rows. Need to first sum up for stop name then divided by 365 to get day avg.
 """
 import calendar
 import gcsfs
@@ -16,6 +12,11 @@ def ingest_omnitrans(
     agency_name: str = "omnitrans",
 ) -> pd.DataFrame:
     """
+    Import Omnitrans Excel.
+    Average to daily. Raw data is total ridership over each fiscal year.
+    Add date according to fiscal year, i.e., first day of the fiscal year.
+    Note: For each Stop Name, there can be multiple rows. 
+    Need to first sum up for stop name then divided by 365 to get day avg.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -51,7 +52,32 @@ def ingest_omnitrans(
     
     return raw_omni_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Route": "route_id",
+        "Stop Name": "stop_name",
+        # avg_boardings, avg_alightings were already named, don't need it here
+    }
+    
+    df = df.assign(
+        reporting_unit = "fiscal_year",
+        ridership_measure = "total",
+        geography_grain: "stop",
+        daily_ridership_basis = "calculated_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "omnitrans"

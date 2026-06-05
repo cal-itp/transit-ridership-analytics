@@ -1,13 +1,5 @@
 """
 Santa Cruz Metro
-
-1. Combine four files to one dataset
-2. Extract date information from file names
-3. Hard code start date and end date for the FY2025 (2024-07-01 to 2025-06-30)
-4. Format stop name and agg/sum ridership for the same stop. E.g., "Barack Obama Blvd + W San Carlos" and "Barack Obama Blvd + W San Carlos [0901]".
-5. stop id 2594 has two diff stop names: Freedom Blvd (K-Mart) and Freedom Blvd (Vallarta Supermarkets). 
-stop id 1796: "Soquel Ave + Pacheco Ave" and "Soquel Ave + San Juan Ave" stop id 1666: "Ocean + Hubbard " 
-and "Ocean + Washburn Ave" We could make the name consistent (keep the first one), but for now, keep both since stop name may change over time.
 """
 import gcsfs
 import pandas as pd
@@ -65,8 +57,16 @@ def clean_individual_excel(filename: str):
 def ingest_santa_cruz_metro(
     agency_name: str = "santa_cruz_metro",
 ) -> pd.DataFrame:
-    """
-    """
+    '''
+    1. Combine four files to one dataset
+    2. Extract date information from file names
+    3. Hard code start date and end date for the FY2025 (2024-07-01 to 2025-06-30)
+    4. Format stop name and agg/sum ridership for the same stop. E.g., "Barack Obama Blvd + W San Carlos" and "Barack Obama Blvd + W San Carlos [0901]".
+    5. stop id 2594 has two diff stop names: Freedom Blvd (K-Mart) and Freedom Blvd (Vallarta Supermarkets). 
+    stop id 1796: "Soquel Ave + Pacheco Ave" and "Soquel Ave + San Juan Ave" stop id 1666: 
+    "Ocean + Hubbard " 
+    and "Ocean + Washburn Ave" We could make the name consistent (keep the first one), but for now, keep both since stop name may change over time.
+    '''
     list_of_files = list(RAW_DATA_YAML[agency_name])
 
     list_of_cleaned_dfs = [clean_individual_excel(one_filename) for one_filename in list_of_files]
@@ -81,7 +81,7 @@ def ingest_santa_cruz_metro(
     )
 
     raw_scm_export = raw_scm_export.groupby(
-        by=["Stop Name", "Stop ID", "start_date", "end_date"], dropna=False
+        by=["Stop Name", "Stop ID", "start_date", "end_date", "schedule_name"], dropna=False
     ).agg({
         "Boardings": "sum", 
         "Alightings": "sum"
@@ -89,7 +89,33 @@ def ingest_santa_cruz_metro(
 
     return raw_scm_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "Boardings": "avg_boardings",
+        "Alightings": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "fiscal_year",
+        ridership_measure = "total",
+        geography_grain: "stop",
+        daily_ridership_basis = "calculated_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "santa_cruz_metro"

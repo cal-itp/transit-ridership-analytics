@@ -1,9 +1,5 @@
 """
 Golden Gate Park Shuttle
-
-1. Reshape the data from a wide format, where each stop is a separate column, into a long 
-format where each row represents the ridership for a specific stop on a specific day.
-2. Filter out Stop = "Total"
 """
 import gcsfs
 import pandas as pd
@@ -14,6 +10,11 @@ def ingest_golden_gate_park_shuttle(
     agency_name: str = "golden_gate_park_shuttle",
 ) -> pd.DataFrame:
     """
+    Import Golden Gate Park Excel.
+    1. Reshape the data from a wide format, where each stop is a separate column, 
+    into a long format where each row represents the ridership for a specific 
+    stop on a specific day.
+    2. Filter out Stop = "Total"
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -44,7 +45,33 @@ def ingest_golden_gate_park_shuttle(
     
     return raw_ggp_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Day Type": "day_type",
+        "Date": "date",
+        "stop": "stop_name",
+        "ridership": "avg_ridership"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "golden_gate_park_shuttle"

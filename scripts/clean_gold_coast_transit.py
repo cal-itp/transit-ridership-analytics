@@ -1,8 +1,8 @@
 """
 Gold Coast Transit
 
-1. Import one sheet (May 2025 data) for now, which contains most comprehensive columns/info.
-2. Add headers/column names.
+We received raw data for May and October, from 2018 to 2025. 
+In first release we only import May 2025 data.
 """
 import gcsfs
 import pandas as pd
@@ -13,6 +13,10 @@ def ingest_gold_coast_transit(
     sheet_name: str = "May_2025_Stop_Ridership"
 ) -> pd.DataFrame:
     """
+    Import Gold Coast Excel.
+    More time-series ridership here, future TODO.
+    1. Import one sheet (May 2025 data) for now, which contains most comprehensive columns/info.
+    2. Add headers/column names.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -39,7 +43,35 @@ def ingest_gold_coast_transit(
 
     return raw_gct_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "day_of_week": "day_type",
+        "route": "route_id",
+        "lat": "stop_lat",
+        "lon": "stop_lon",
+        "total_on": "avg_boardings",
+        "total_off": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "month",
+        ridership_measure = "avg_daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "gold_coast_transit"

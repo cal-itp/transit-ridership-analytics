@@ -12,6 +12,7 @@ def ingest_bart_entries_and_exits(
     sheet_name: str = "Daily Raw Data"
 ) -> pd.DataFrame:
     """
+    Import BART entries and exit Excel and clean up columns.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     raw_bart = pd.read_excel(
@@ -58,6 +59,10 @@ def ingest_bart_station_crosswalk(
     agency_name: str = "bart",
     sheet_name: str = "Station Crosswalk"
 ) -> pd.DataFrame:
+    """
+    Import station crosswalk Excel 
+    to get the full station name.
+    """
     filename = RAW_DATA_YAML[agency_name][0]
     
     raw_bart_station = pd.read_excel(
@@ -96,6 +101,33 @@ def merge_bart_entries_exits_station(
     )
 
     return raw_bart_export
+    
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Day Type": "day_type",
+        "Station Name": "stop_name",
+        "Entries": "avg_boardings",
+        "Exits": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
     
 if __name__ == "__main__":
     

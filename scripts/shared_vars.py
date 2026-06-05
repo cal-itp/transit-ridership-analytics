@@ -11,13 +11,15 @@ PROCESSED_GCS = f"{GCS_FILE_PATH}processed/"
 RAW_DATA_YAML_PATH = Path("raw_datasets.yml")
 
 with open(RAW_DATA_YAML_PATH) as f:
+    # .read_text() needs to read a path
+	# otherwise it returns the string "raw_datasets.yml"
     RAW_DATA_YAML = yaml.safe_load(Path(RAW_DATA_YAML_PATH).read_text())
 
 # Map the existing agency names "City of Fresno", "BART" to the schedule_name that is used in warehouse
 # GTFS stop data comes in feeds, which use schedule_name
 AGENCY_TO_GTFS_NAME_DICT = {
     "bart": "Bay Area 511 BART Schedule",
-    "big_blue_bus": "Big Blue Bus Schedule",
+    "big_blue_bus": "Big Blue Bus Swiftly Schedule",
     "caltrain": "Bay Area 511 Caltrain Schedule",
 	"fresno_area_express": "Fresno Schedule", # or is it Fresno County Schedule
 	"culver_citybus": "Culver City Schedule",

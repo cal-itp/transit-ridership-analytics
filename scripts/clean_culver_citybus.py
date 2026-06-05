@@ -1,8 +1,6 @@
 """
 Culver CityBus
 
-1. Skip first row (empty) in csv
-2. Aggregate numbers of each time period of day to get daily level ridership.
 Note: Stop sequence can be different for one stop.
 """
 import gcsfs
@@ -13,6 +11,9 @@ def ingest_culver_citybus(
     agency_name: str = "culver_citybus"
 ) -> pd.DataFrame:
     """
+    Import Culver City.
+    1. Skip first row (empty) in csv
+    2. Aggregate numbers of each time period of day to get daily level ridership.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     raw_culver_city = pd.read_csv(
@@ -44,7 +45,36 @@ def ingest_culver_citybus(
 
     return raw_culver_city_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Day of Week": "day_type",
+        "Direction": "direction",
+        "Route": "route_name",
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "AVG On": "avg_boardings",
+        "AVG Off": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "custom_period",
+        ridership_measure = "avg_time_of_day",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "culver_citybus"

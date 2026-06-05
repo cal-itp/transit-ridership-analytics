@@ -1,11 +1,11 @@
 """
 Riverside Transit
-Aggregate swipe/transaction level data to stop level ridership
 
-Note: The original raw datasets are transactions data, which are too large to directly upload to Github. 
-The code in this section preprocess the raw data and aggregate to stop level ridership. 
-Raw datasets are not uploaded to Github repo. 
-Lat and lon for each (stop, route, direction) are the max/min of all records for the corresponding combination.
+Note: The original raw datasets are transactions data, 
+which are too large to directly upload to Github. 
+
+- Filtered transactions df is exported as parquet.
+- Transactions aggregated to stop ridership is exported as parquet.
 """
 import gcsfs
 import pandas as pd
@@ -15,7 +15,8 @@ from shared_vars import LOCAL_FOLDER, RAW_GCS, AGENCY_TO_GTFS_NAME_DICT, RAW_DAT
 
 def aggregate_transactions_to_ridership(transactions_df: pd.DataFrame) -> pd.DataFrame:
     """
-    extract only valid transaction types (values not in the list are the meta data rows)
+    extract only valid transaction types 
+    (values not in the list are the meta data rows)
     """
     ridership_transaction_codes = [
         "114 - Stored ride card", 
@@ -44,7 +45,8 @@ def aggregate_transactions_to_ridership(transactions_df: pd.DataFrame) -> pd.Dat
 
 def filter_transactions(filename: str) -> pd.DataFrame:
     """
-    Find the index of the first "Search Criteria" row and drop all following rows which are not ridership data.
+    Find the index of the first "Search Criteria" row and drop all 
+    following rows which are not ridership data.
     Clean up the filtered transactions to get ridership
     """
     t_raw_df = pd.read_csv(filename, header=4)
@@ -68,6 +70,13 @@ def ingest_riverside_transit(
     agency_name: str = "riverside_transit"
 ) -> pd.DataFrame:
     """
+    Aggregate swipe/transaction level data to stop level ridership.
+
+    Filtered transactions are saved as parquet.
+    
+    Preprocess the raw data and aggregate to stop level ridership. 
+    Lat and lon for each (stop, route, direction) are the max/min of all 
+    records for the corresponding combination.
     """
     list_of_files = list(RAW_DATA_YAML[agency_name])
 
@@ -90,6 +99,35 @@ def ingest_riverside_transit(
        
     return raw_riverside_export
     
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "Route": "route_id",
+        "Direction": "direction",
+        "Longitude": "stop_lon",
+        "Latitude": "stop_lat",
+        "ridership": "avg_ridership"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "",
+        geography_grain: "transaction",
+        daily_ridership_basis = "derived_from_transactions"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
 
 if __name__ == "__main__":
    

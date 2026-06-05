@@ -1,19 +1,6 @@
 """
 SamTrans
 
-1. Combine files into one dataset
-2. Aggregate trip-stop to stop level ridership.
-3. There are cases where stop name strings are diff but they are the same stop because of the dot in the street type, 
-for example, "3rd Ave & Pint St" vs "3rd Ave & Pine St.". 
-Standardize the stop names (keep the version without the dot).
-
-Note: The data is for each trip-stop, including door open and close time. 
-The lat and lon at the same stop can be slightly different across trips. 
-The agg in the preprocessing takes maximum of the lat and lon for each stop across trips, routes and dates.
-
-Potentially, make stop a gdf here and dedupe and keep as geoparquet. 
-Depends how it's used against GTFS in subsequent step.
-
 Look at Riverside too and see if both of these can follow a 
 similar workflow to upload parquets in two stages
 """
@@ -57,6 +44,17 @@ def ingest_samtrans(
     agency_name: str = "samtrans"
 ) -> pd.DataFrame:
     """
+    1. Combine files into one dataset
+    2. Aggregate trip-stop to stop level ridership.
+    3. There are cases where stop name strings are diff but they are the same stop 
+    because of the dot in the street type, 
+    for example, "3rd Ave & Pint St" vs "3rd Ave & Pine St.". 
+    Standardize the stop names (keep the version without the dot).
+
+    Note: The data is for each trip-stop, including door open and close time. 
+    The lat and lon at the same stop can be slightly different across trips. 
+    The agg in the preprocessing takes maximum of the lat and lon for each 
+    stop across trips, routes and dates.
     """
     list_of_files = list(RAW_DATA_YAML[agency_name])
 
@@ -103,7 +101,36 @@ def ingest_samtrans(
     
     return raw_samtrans_export
 
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Route": "route_id",
+        "Stop ID": "stop_id",
+        "Stop Name": "stop_name",
+        "Lat": "stop_lat",
+        "Lon": "stop_lon",
+        "Ons": "avg_boardings",
+        "Offs": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "trip_stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "samtrans"

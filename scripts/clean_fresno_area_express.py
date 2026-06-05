@@ -1,10 +1,5 @@
 """
-Fresno Area Express (City of Fresno) 
-  script is called clean_fresno_area_express (change yaml), 
-  but yaml change to Fresno Area Express would be more descriptive and follow how 
-  other folders describe transit agencies, not organizations (could be city).
-  the exported Excel was named Fresno Area Express, indicating this is the folder to use.
-Add day type, start and end date column to fit in staging table schema.
+Fresno Area Express
 """
 import gcsfs
 import pandas as pd
@@ -16,6 +11,8 @@ def ingest_fresno_area_express(
     agency_name: str = "fresno_area_express"
 ) -> pd.DataFrame:
     """
+    Import Fresno's Excel.
+    Add day type, start and end date column to fit in staging table schema.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     raw_fresno = pd.read_excel(f"{LOCAL_FOLDER}{agency_name}/{filename}", engine="openpyxl")
@@ -31,7 +28,34 @@ def ingest_fresno_area_express(
     
     return raw_fresno_export
 
-	
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Date": "date",
+        "StopID": "stop_id",
+        "StopLabel": "stop_name",
+        "ProjectedBoarding": "avg_boardings",
+        "ProjectedAlighting": "avg_alightings"
+    }
+
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df	
+    
 if __name__ == "__main__":
    
     agency_name = "fresno_area_express"

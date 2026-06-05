@@ -1,8 +1,5 @@
 """
 OCTA
-
-Aggregate trip-stop/event level (door open/close) ridership to stop level ridership.
-Looks like raw stop name has stop id as prefix. Extract stop id from stop name.
 """
 import calendar
 import gcsfs
@@ -15,6 +12,11 @@ def ingest_octa(
     agency_name: str = "octa",
 ) -> pd.DataFrame:
     """
+    Import OCTA Excvel.
+    Aggregate trip-stop/event level (door open/close) ridership to 
+    stop level ridership.
+    Looks like raw stop name has stop id as prefix. 
+    Extract stop id from stop name.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -36,7 +38,35 @@ def ingest_octa(
     
     return raw_octa_export
     
-
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "Route": "route_name",
+        "Direction": "direction",
+        "stop_id": "stop_id",
+        "Stop Name": "stop_name",
+        "APC Boarding": "avg_boardings",
+        "APC Alighting": "avg_alightings"
+    }
+    
+    df = df.assign(
+        reporting_unit = "day",
+        ridership_measure = "daily",
+        geography_grain: "trip_stop",
+        daily_ridership_basis = "reported_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "octa"

@@ -11,6 +11,7 @@ def ingest_long_beach_transit(
     agency_name: str = "long_beach_transit",
 ) -> pd.DataFrame:
     """
+    Import Long Beach Excel.
     """
     filename = RAW_DATA_YAML[agency_name][0]
     
@@ -34,7 +35,36 @@ def ingest_long_beach_transit(
     
     return raw_long_beach_export
     
+def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Rename columns to a shared schema. 
+    Use agency_config/*.yml to see what those names are.
+    
+    Create columns that add information about variation across operators
+    - reporting_unit
+    - ridership_measure
+    - geographic grain
+    - daily_ridership_basis
+    """
+    RENAME_COLS_DICT = {
+        "DayType": "day_type",
+        "Route": "route_id",
+        "Direction": "direction",
+        "StopID": "stop_id",
+        "StopName": "stop_name",
+        "Boardings": "avg_boardings",
+        "Alightings": "avg_alightings"
+    }
 
+    df = df.assign(
+        reporting_unit = "fiscal_year",
+        ridership_measure = "avg_daily",
+        geography_grain: "stop",
+        daily_ridership_basis = "reported_avg_daily"
+    ).rename(columns = RENAME_COLS_DICT)
+    
+    return df
+    
 if __name__ == "__main__":
    
     agency_name = "long_beach_transit"
