@@ -123,7 +123,7 @@ def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.assign(
         reporting_unit = "day",
         ridership_measure = "daily",
-        geography_grain: "stop",
+        geography_grain = "stop",
         daily_ridership_basis = "reported_daily"
     ).rename(columns = RENAME_COLS_DICT)
     

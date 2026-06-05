@@ -55,7 +55,7 @@ def rename_operator_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.assign(
         reporting_unit = "custom_period",
         ridership_measure = "avg_daily",
-        geography_grain: "stop",
+        geography_grain = "stop",
         daily_ridership_basis = "reported_avg_daily"
     ).rename(columns = RENAME_COLS_DICT)
     

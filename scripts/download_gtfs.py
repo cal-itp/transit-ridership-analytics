@@ -8,7 +8,7 @@ import pandas as pd
 from google.cloud import bigquery
 
 import time_utils
-from shared_vars import RAW_GCS, INTERMED_GCS, RAW_DATA_YAML
+from shared_vars import RAW_GCS, INTERMED_GCS, RAW_DATA_YAML, AGENCY_TO_GTFS_NAME_DICT
 from ridership_utils import geography_utils, bq_utils, utils
 
 credentials, project = google.auth.default()
@@ -152,6 +152,70 @@ def merge_feeds_with_ridership_period(
     
     return filtered_operator_feeds
 
+def import_stops_for_operator(agency_name: str):
+    """
+    """
+    gtfs_name = AGENCY_TO_GTFS_NAME_DICT[agency_name]    
+    
+    stops = gpd.read_parquet(
+        f"{INTERMED_GCS}dim_stops_with_feed_service_period.parquet",
+        filters = [[("schedule_name", "==", gtfs_name)]],
+        storage_options = {"token": credentials.token}
+    )#.pipe(dedupe_stops)
+    
+    return stops
+
+def dedupe_stops(stops: gpd.GeoDataFrame):
+    """
+    Just keep a set of stop columns to use for merge.
+    Dedupe by keeping most recent feed_key first.
+    Keep unique combinations of stop_id, stop_name, geometry across feeds.
+    Keep stop_key for ability to key back into dim_stops and find what feed we used.
+    """
+    stop_combo_cols = ["schedule_name", "stop_id", "stop_name"]
+    stops2 = (
+        stops
+        .sort_values(
+            stop_combo_cols + ["service_date_start"], 
+            ascending=[True for c in stop_combo_cols] + [False]
+        )[stop_combo_cols + ["key", "geometry"]]
+        .drop_duplicates(subset=stop_combo_cols)
+        .reset_index(drop=True)
+    )
+    return stops2
+
+def prep_ridership_for_gtfs_join(agency_name: str):
+    """
+    Is it stop_id or stop_name that gets cleaned here?
+    """
+    ridership = pd.read_parquet(
+        f"{RAW_GCS}{agency_name}/ridership_round1.parquet",
+        filesystem = gcsfs.GCSFileSystem()
+    )
+    return ridership
+
+def join_on_stop_id(
+    ridership_df: pd.DataFrame,
+    stops_gdf: gpd.GeoDataFrame,
+    merge_cols: list = ["schedule_name", "stop_id"] # ["date"?]
+) -> gpd.GeoDataFrame:
+    """
+    This join will definitely create fanout, esp
+    if we don't have a date column.
+    Should stops_gdf be deduped (recent feed kept)?
+    """
+    gdf = pd.merge(
+        ridership_df,
+        stops_gdf,
+        on = merge_cols,
+        how = "left"
+    )
+
+    gdf = gpd.GeoDataFrame(gdf, geometry="geometry")
+    return gdf
+
+    
+
 if __name__ == "__main__":
 
     SCHEDULE_FEEDS_FILENAME = "schedule_feeds"
@@ -161,7 +225,7 @@ if __name__ == "__main__":
         f"{INTERMED_GCS}{SCHEDULE_FEEDS_FILENAME}.parquet",
         filesystem = gcsfs.GCSFileSystem()
     )
-    
+    '''
     list_of_operators = list(RAW_DATA_YAML.keys())
 
     # Grab the ridership start/end from all the individual operator parquets
@@ -173,7 +237,22 @@ if __name__ == "__main__":
 
     # download dim_stops for these feed_keys
     download_dim_stops_for_feeds_present(feeds_present)
+    '''
+    # merge dim_stops with feeds as save?
+    dim_stops = gpd.read_parquet(
+        f"{INTERMED_GCS}dim_stops_round1.parquet",
+        storage_options = {"token": credentials.token}
+    )
 
+    dim_stops_with_feeds = pd.merge(
+        dim_stops,
+        feeds_df,
+        on = "feed_key",
+        how = "inner"
+    )
 
-
-    
+    utils.geoparquet_gcs_export(
+        dim_stops_with_feeds,
+        INTERMED_GCS,
+        "dim_stops_with_feed_service_period"
+    )
