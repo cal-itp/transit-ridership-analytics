@@ -46,6 +46,7 @@ def calculate_time_overlap(
     """
     Be able to find the overlap (in days) between 
     ridership_start/end and GTFS schedule feed_key's service_date_start/end.
+	https://medium.com/@sebastianof/how-pyto-find-the-overlap-between-two-time-intervals-93904c401120
     """
     overlap_timedelta = max(
         timedelta(0), 
