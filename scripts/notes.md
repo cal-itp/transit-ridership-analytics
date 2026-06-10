@@ -25,14 +25,18 @@
 ## Data Transformations
 1. Join with GTFS data -> geoparquet
 2. Post-join with GTFS, there's additional stop cleaning to fix errors.
+   * one gap is sampling warehouse dates. move to bringing in all active feeds, universe of stops that could join with ridership.
+   * how will stops be deduplicated? once we bring in universe of stops, we have different issue of having fanout.
+   * one cleaning step now is that stops should show same information, regardless of whether the versioned stop shows differences (stop_names differ slightly). this will also need to be considered with the deduplicating, though it's more akin to labeling.
+   * the join should support the final labeling with as few steps as possible
 3. One processed dataset (1 geoparquet) in `final`
 4. Add to Makefile
 5. Add data catalog - geoparquet should be used internally (already in bucket, cleaned, dtypes stable)
    
 ## Publishing Data
-1. the final geoparquet can be shared in multiple formats - geoparquet / zipped geojson / zipped csv
-   * figure out which file types make the most sense - try and use it and see!
-2. upload to GitHub (zip)
-3. upload to public GCS bucket
+1. the final geoparquet can be shared in multiple formats - geoparquet / geojson / csv
+2. write this to private GCS first. allow changes to be made and checked before overwriting public files.
+3. copy private GCS files over to public GCS bucket
 4. metadata files - is this needed? parquets keep the data types, unlike csvs. should keep existing markdown of column definitions of processed file.
+   * might need to also shared metadata parquet file (contents of `agency_config.yml`)
 5. Add functions to utils, add to Makefile
