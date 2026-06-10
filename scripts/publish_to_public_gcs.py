@@ -1,9 +1,8 @@
 """
-Export the final ridership dataset to private GCS bucket, 
-then copy those files to public GCS bucket
+Export the final ridership dataset to public GCS bucket:
 - geoparquet
 - geojson
-- csv (unzipped. if using uploading to repo, then zip)
+- csv (unzipped)
 
 GTFS Digest example: https://github.com/cal-itp/data-analyses/blob/1965922d4c98dbb9b2f64dba1691dd3c57680551/gtfs_digest/_publish_public_data.py
 """
@@ -13,16 +12,17 @@ import gcsfs
 import pandas as pd
 
 from pathlib import Path
+from typing import Literal
 
-from ridership_utils import publish_utils, utils
 from shared_vars import INTERMED_GCS, PROCESSED_GCS, PUBLIC_GCS
 
 credentials, _ = google.auth.default()
- 
+
 
 def split_filename_into_folder_and_name(export_filename: str):
     name = Path(export_filename).stem
     gcs_parent_path = export_filename.split(name)[0]
+    
     return gcs_parent_path, name
 
 def export_as_csv(
@@ -77,10 +77,8 @@ def export_as_geojson(
     
     return
 
-        
-        
 if __name__ == "__main__":
-    
+
 	gdf = gpd.read_parquet(
 	    f"{INTERMED_GCS}dim_stops_with_feed_service_period.parquet",
 	    storage_options={"token": credentials.token}
@@ -95,20 +93,18 @@ if __name__ == "__main__":
 		gdf, 
 		export_filename = f"{PROCESSED_GCS}publish/test", 
 	)
-
-	
+    
 	# copy our private files to public GCS
 	# make sure we can stage files ready to publish and double check first
-	filepaths = [
-		f"{INTERMED_GCS}dim_stops_with_feed_service_period.parquet",
-		f"{PROCESSED_GCS}publish/test.csv",
-		f"{PROCESSED_GCS}publish/test.geojson",
-	]
+    filepaths = [
+        f"{PROCESSED_GCS}publish/test.csv",
+        f"{PROCESSED_GCS}publish/test.geojson",
+    ]
 	
-	for f in filepaths:
+    for f in filepaths:
         publish_utils.write_to_public_gcs(
             f,
             f"transit_ridership/{Path(f).name}",
             PUBLIC_GCS
-        )
+	)
 	
