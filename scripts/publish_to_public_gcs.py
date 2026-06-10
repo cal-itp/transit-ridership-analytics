@@ -8,89 +8,117 @@ GTFS Digest example: https://github.com/cal-itp/data-analyses/blob/1965922d4c98d
 """
 import geopandas as gpd
 import google.auth
+import gcsfs
 import pandas as pd
 
 from pathlib import Path
+from typing import Literal
 
 from ridership_utils import publish_utils, utils
-from update_vars import GTFS_DATA_DICT, file_name
-  
+#from shared_vars import PROCESSED_GCS, PUBLIC_GCS
 
-credentials, project = google.auth.default()
-PUBLIC_GCS = GTFS_DATA_DICT.gcs_paths.PUBLIC_GCS
+GCS_FILE_PATH = "gs://calitp-analytics-data/data-analyses/transit-ridership-analytics/"
+INTERMED_GCS = f"{GCS_FILE_PATH}intermediate/"
+PROCESSED_GCS = f"{GCS_FILE_PATH}processed/"
+PUBLIC_GCS = "gs://calitp-publish-data-analysis/"
+
+credentials, _ = google.auth.default()
 
     
-def grab_filepaths(
-    table_section: Literal["gtfs_digest_rollup"], 
-    file_keys: list,
-    file_name: str) -> list:
-    """
-    https://github.com/cal-itp/data-analyses/blob/main/_shared_utils/shared_utils/gtfs_analytics_data.yml
-    
-    table_section corresponds to "schedule_tables", "digest_tables", 
-    "speeds_tables", etc
-    """
-    GCS = GTFS_DATA_DICT[table_section].dir
-    
-    file_paths = [GTFS_DATA_DICT[table_section][f] for f in file_keys]
-    
-    return [f"{GCS}processed/{f}_{file_name}.parquet" for f in file_paths]
-    
-def export_parquet_as_csv_or_geojson(
-    filename: str,
-    filetype: Literal["df", "gdf"],
+def export_gdf_to_gzip_geojson(
+    gdf: gpd.GeoDataFrame,
+    export_filename: str
 ):
     """
-    For parquets, we want to export as csv.
-    For geoparquets, we want to export as geojson.
+    Convert gdf to gzipped geojson.
+    Datetime columns must be coerced to string.
+    Geometry is ok.
     """
-    if filetype=="df":
-        df = gcs_pandas().read_parquet(filename)
+    # geojson can't do timestamps, so must coerce to string
+    date_cols = gdf.select_dtypes("datetime64").columns
+    geojson_bytes = gdf.astype({c: "str" for c in date_cols}).to_json().encode("utf-8")
+	
+    with gcsfs.GCSFileSystem().open(export_filename, "wb") as writer:
+        with gzip.GzipFile(fileobj=writer, mode="w") as gz:
+            gz.write(geojson_bytes)
+
+    print(f"exported {export_filename}")
+	
+    return 
+
+def export_parquet_as_csv_geojson(
+    df: gpd.GeoDataFrame,
+    export_folder: str,
+    filename: str,
+    filetype: Literal["csv", "geojson"]
+):
+    """
+    """
+    date_cols = df.select_dtypes("datetime64").columns
+
+    if filetype=="csv":
+
+        # back out geometry into stop_lon / stop_lat
+        # coerce dtypes as best as possible here
+        df = df.assign(
+            stop_lon = df.geometry.x,
+            stop_lat = df.geometry.y
+        ).drop(
+            columns = ["geometry"]
+        ).astype({c: "str" for c in date_cols})
+
         df.to_csv(
-            f"{PUBLIC_GCS}gtfs_digest/"
-            f"{Path(filename).stem}.csv", index=False
+            f"{export_folder}{Path(filename).stem}.csv", index=False
         )
         
-        
-    elif filetype=="gdf":
-        df = gpd.read_parquet(filename, storage_options={"token": credentials.token},)
+    elif filetype=="geojson":
+        df = df.astype({c: "str" for c in date_cols})
+
         utils.geojson_gcs_export(
             df,
-            f"{PUBLIC_GCS}gtfs_digest/",
+            f"{export_folder}",
             Path(filename).stem,
             geojson_type = "geojson"
         )
+
         
         
 if __name__ == "__main__":
     
-    digest_gdf_keys = [
-        "route_map"]
+	gdf = gpd.read_parquet(
+	    f"{INTERMED_GCS}dim_stops_with_feed_service_period.parquet",
+	    storage_options={"token": credentials.token}
+	)
+	
+	#export_gdf_to_gzip_geojson(gdf, f"{PROCESSED_GCS}publish/test.gzip")
+	
+	export_parquet_as_csv_geojson(
+		gdf, 
+		export_folder = f"{PROCESSED_GCS}publish/", 
+		filename = "test.csv",
+		filetype = "csv"
+	)
+
+	export_parquet_as_csv_geojson(
+		gdf, 
+		export_folder = f"{PROCESSED_GCS}publish/", 
+		filename = "test",
+		filetype = "geojson"
+	)
     
-    digest_df_keys = [
-        "schedule_rt_route_direction",
-        "operator_summary",
-        "hourly_day_type_summary",
-    ] 
-    
-    df_filepaths = (
-        grab_filepaths("gtfs_digest_rollup", digest_df_keys, file_name)
-    )
-    
-    gdf_filepaths = grab_filepaths("gtfs_digest_rollup", digest_gdf_keys, file_name)
-    
-    # copy our private files to public GCS
-    # for df ones, export as csv too
-    # for gdf ones, export as geojson
-    for f in df_filepaths + gdf_filepaths:
+	'''
+	# copy our private files to public GCS
+	# make sure we can stage files ready to publish and double check first
+	filepaths = [
+		f"{PROCESSED_GCS}publish/test.gzip",
+		f"{PROCESSED_GCS}publish/test.geoparquet",
+		f"{PROCESSED_GCS}publish/test.csv"
+	]
+	
+	for f in filepaths:
         publish_utils.write_to_public_gcs(
             f,
-            f"gtfs_digest/{Path(f).name}",
+            f"transit_ridership/{Path(f).name}",
             PUBLIC_GCS
         )
-    
-    for f in df_filepaths:
-        export_parquet_as_csv_or_geojson(f, filetype="df")
-        
-    for f in gdf_filepaths:
-        export_parquet_as_csv_or_geojson(f, filetype="gdf")
+	'''
