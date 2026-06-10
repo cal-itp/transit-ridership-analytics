@@ -7,6 +7,7 @@ AGENCY_GCS = f"{GCS_FILE_PATH}transit_agency_raw/"
 RAW_GCS = f"{GCS_FILE_PATH}raw/"
 INTERMED_GCS = f"{GCS_FILE_PATH}intermediate/"
 PROCESSED_GCS = f"{GCS_FILE_PATH}processed/"
+PUBLIC_GCS = "gs://calitp-publish-data-analysis/"
 
 RAW_DATA_YAML_PATH = Path("raw_datasets.yml")
 

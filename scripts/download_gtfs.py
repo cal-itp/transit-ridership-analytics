@@ -1,29 +1,28 @@
-"""
-"""
-import geopandas as gpd
+""" """
+
 import gcsfs
+import geopandas as gpd
 import google.auth
 import pandas as pd
-
-from google.cloud import bigquery
-
 import time_utils
-from shared_vars import RAW_GCS, INTERMED_GCS, RAW_DATA_YAML
-from ridership_utils import geography_utils, bq_utils, utils
+from google.cloud import bigquery
+from ridership_utils import bq_utils, geography_utils, utils
+from shared_vars import AGENCY_TO_GTFS_NAME_DICT, INTERMED_GCS, RAW_GCS
 
 credentials, project = google.auth.default()
 
+
 def download_schedule_feeds(filename: str):
     """
-    From mart_gtfs.fct_daily_feed_scheduled_service_summary, 
+    From mart_gtfs.fct_daily_feed_scheduled_service_summary,
     group by feed_key and gtfs_dataset_name to find the relevant
-    service_date date range. 
-    
+    service_date date range.
+
     Save this as a parquet.
 
     TODO: what should argument be? don't want this query to run
     """
-    sql_query = f"""
+    sql_query = """
         SELECT
             feed_key,
             gtfs_dataset_name AS schedule_name,
@@ -35,26 +34,18 @@ def download_schedule_feeds(filename: str):
     """
 
     df = bq_utils.bq_faster_download(sql_query)
-        
-    df = df.astype({
-        "service_date_start": "datetime64[ns]",
-        "service_date_end": "datetime64[ns]"
-    })
 
-    df.to_parquet(
-        f"{INTERMED_GCS}{filename}.parquet",
-        filesystem = gcsfs.GCSFileSystem()
-    )
+    df = df.astype({"service_date_start": "datetime64[ns]", "service_date_end": "datetime64[ns]"})
+
+    df.to_parquet(f"{INTERMED_GCS}{filename}.parquet", filesystem=gcsfs.GCSFileSystem())
 
     print(df.shape)
     print("saved schedule feeds")
-    
-    return 
+
+    return
 
 
-def download_dim_stops_for_feeds_present(
-    subset_feeds: list
-):
+def download_dim_stops_for_feeds_present(subset_feeds: list):
     keep_stop_cols = [
         "key",
         "feed_key",
@@ -65,103 +56,147 @@ def download_dim_stops_for_feeds_present(
     ]
 
     basic_sql_query = bq_utils.basic_sql_query(
-        project_name = "cal-itp-data-infra", 
-        dataset_name = "mart_gtfs",
-        table_name = "dim_stops", 
-        columns = keep_stop_cols
+        project_name="cal-itp-data-infra", dataset_name="mart_gtfs", table_name="dim_stops", columns=keep_stop_cols
     )
-    
+
     query_params = bq_utils.set_bq_query_params(
-        array_query_parameter = {"feed_key": subset_feeds},
+        array_query_parameter={"feed_key": subset_feeds},
     )
-    
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=query_params
-    )
-    
+
+    job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+
     sql_query = f"{basic_sql_query} WHERE feed_key IN UNNEST(@feed_key)"
-    
+
     print(f"query: {sql_query}")
     print(f"job_config: {job_config}")
-    
+
     df = bq_utils.bq_faster_download(sql_query, job_config=job_config)
-    
+
     df = geography_utils.convert_to_gdf(df, "pt_geom", "point")
 
-    utils.geoparquet_gcs_export(
-        df,
-        INTERMED_GCS,
-        "dim_stops_round1"
-    )
+    utils.geoparquet_gcs_export(df, INTERMED_GCS, "dim_stops_round1")
 
     print("exported dim_stops")
-    
-    return 
 
-def get_ridership_start_and_end(list_of_operators: list) -> pd.DataFrame: 
+    return
 
-    operators_with_ridership = pd.concat([
-        pd.read_parquet(
-            f"{RAW_GCS}{agency_name}/ridership_round1.parquet",
-            columns = ["schedule_name", "start_date", "end_date"],
-            filesystem = gcsfs.GCSFileSystem()
-        ) for agency_name in list_of_operators
-        ], axis=0, ignore_index=True
-    ).drop_duplicates().reset_index(drop=True)
+
+def get_ridership_start_and_end(list_of_operators: list) -> pd.DataFrame:
+
+    operators_with_ridership = (
+        pd.concat(
+            [
+                pd.read_parquet(
+                    f"{RAW_GCS}{agency_name}/ridership_round1.parquet",
+                    columns=["schedule_name", "start_date", "end_date"],
+                    filesystem=gcsfs.GCSFileSystem(),
+                )
+                for agency_name in list_of_operators
+            ],
+            axis=0,
+            ignore_index=True,
+        )
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
 
     # for each operator, get only 1 ridership start / end date
     operator_ridership_period = (
-        operators_with_ridership
-        .groupby("schedule_name")
-        .agg({
-            "start_date": "min",
-            "end_date": "max"
-        })
+        operators_with_ridership.groupby("schedule_name")
+        .agg({"start_date": "min", "end_date": "max"})
         .reset_index()
-        .rename(columns = {
-            "start_date": "ridership_start_date",
-            "end_date": "ridership_end_date"
-        })
+        .rename(columns={"start_date": "ridership_start_date", "end_date": "ridership_end_date"})
     )
 
     return operator_ridership_period
+
 
 def merge_feeds_with_ridership_period(
     feeds_df: pd.DataFrame,
     operator_ridership_period_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """
-    """
-    operator_feeds = pd.merge(
-        operator_ridership_period_df,
-        feeds_df,
-        on = "schedule_name",
-        how = "inner"
-    ).sort_values(["schedule_name", "service_date_start"]).reset_index(drop=True)
+    """ """
+    operator_feeds = (
+        pd.merge(operator_ridership_period_df, feeds_df, on="schedule_name", how="inner")
+        .sort_values(["schedule_name", "service_date_start"])
+        .reset_index(drop=True)
+    )
 
     # calculate_time_overlap is a row-wise function
     operator_feeds["overlap_days"] = operator_feeds.apply(
-        lambda x: 
-        time_utils.calculate_time_overlap(
-            x.service_date_start, x.service_date_end,
-            x.ridership_start_date, x.ridership_end_date), axis=1)
+        lambda x: time_utils.calculate_time_overlap(
+            x.service_date_start, x.service_date_end, x.ridership_start_date, x.ridership_end_date
+        ),
+        axis=1,
+    )
 
-    filtered_operator_feeds = operator_feeds[
-        operator_feeds.overlap_days > 0
-    ].reset_index(drop=True)
-    
+    filtered_operator_feeds = operator_feeds[operator_feeds.overlap_days > 0].reset_index(drop=True)
+
     return filtered_operator_feeds
+
+
+def import_stops_for_operator(agency_name: str):
+    """ """
+    gtfs_name = AGENCY_TO_GTFS_NAME_DICT[agency_name]
+
+    stops = gpd.read_parquet(
+        f"{INTERMED_GCS}dim_stops_with_feed_service_period.parquet",
+        filters=[[("schedule_name", "==", gtfs_name)]],
+        storage_options={"token": credentials.token},
+    )  # .pipe(dedupe_stops)
+
+    return stops
+
+
+def dedupe_stops(stops: gpd.GeoDataFrame):
+    """
+    Just keep a set of stop columns to use for merge.
+    Dedupe by keeping most recent feed_key first.
+    Keep unique combinations of stop_id, stop_name, geometry across feeds.
+    Keep stop_key for ability to key back into dim_stops and find what feed we used.
+    """
+    stop_combo_cols = ["schedule_name", "stop_id", "stop_name"]
+    stops2 = (
+        stops.sort_values(
+            stop_combo_cols + ["service_date_start"], ascending=[True for c in stop_combo_cols] + [False]
+        )[stop_combo_cols + ["key", "geometry"]]
+        .drop_duplicates(subset=stop_combo_cols)
+        .reset_index(drop=True)
+    )
+    return stops2
+
+
+def prep_ridership_for_gtfs_join(agency_name: str):
+    """
+    Is it stop_id or stop_name that gets cleaned here?
+    """
+    ridership = pd.read_parquet(f"{RAW_GCS}{agency_name}/ridership_round1.parquet", filesystem=gcsfs.GCSFileSystem())
+    return ridership
+
+
+def join_on_stop_id(
+    ridership_df: pd.DataFrame,
+    stops_gdf: gpd.GeoDataFrame,
+    merge_cols: list = ["schedule_name", "stop_id"],  # ["date"?]
+) -> gpd.GeoDataFrame:
+    """
+    This join will definitely create fanout, esp
+    if we don't have a date column.
+    Should stops_gdf be deduped (recent feed kept)?
+    """
+    gdf = pd.merge(ridership_df, stops_gdf, on=merge_cols, how="left")
+
+    gdf = gpd.GeoDataFrame(gdf, geometry="geometry")
+    return gdf
+
 
 if __name__ == "__main__":
 
     SCHEDULE_FEEDS_FILENAME = "schedule_feeds"
-    #download_schedule_feeds(SCHEDULE_FEEDS_FILENAME)
+    # download_schedule_feeds(SCHEDULE_FEEDS_FILENAME)
 
-    feeds_df = pd.read_parquet(
-        f"{INTERMED_GCS}{SCHEDULE_FEEDS_FILENAME}.parquet",
-        filesystem = gcsfs.GCSFileSystem()
-    )
-    
+    feeds_df = pd.read_parquet(f"{INTERMED_GCS}{SCHEDULE_FEEDS_FILENAME}.parquet", filesystem=gcsfs.GCSFileSystem())
+    """
     list_of_operators = list(RAW_DATA_YAML.keys())
 
     # Grab the ridership start/end from all the individual operator parquets
@@ -173,7 +208,12 @@ if __name__ == "__main__":
 
     # download dim_stops for these feed_keys
     download_dim_stops_for_feeds_present(feeds_present)
+    """
+    # merge dim_stops with feeds as save?
+    dim_stops = gpd.read_parquet(
+        f"{INTERMED_GCS}dim_stops_round1.parquet", storage_options={"token": credentials.token}
+    )
 
+    dim_stops_with_feeds = pd.merge(dim_stops, feeds_df, on="feed_key", how="inner")
 
-
-    
+    utils.geoparquet_gcs_export(dim_stops_with_feeds, INTERMED_GCS, "dim_stops_with_feed_service_period")

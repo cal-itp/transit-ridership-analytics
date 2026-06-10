@@ -23,6 +23,9 @@ clean_transit_data:
 upload_transit_data:
 	python upload_raw_excel_to_gcs.py
 
+publish_ridership_files:
+	python publish_to_public_gcs.py
+
 ingest_and_upload_raw_data:
 	make clean_transit_data
 	make upload_transit_data	
