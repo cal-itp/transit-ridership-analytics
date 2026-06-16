@@ -50,3 +50,11 @@ santa_cruz_metro:
 - "FY25 Ridership by Stop_Sept 12, 2024-Dec 18,2024.xlsx"
 sunline_transit:
 - "Ridership Data by stop (APC).xlsx"
+foothill_transit:
+- "Foothill Transit FY2025 Ridership Data.csv"
+riverside_transit:
+- "TRANSACTION_DETAIL_REPORT_(JANUARY_1_2025-FEBRUARY_28_2025).csv"
+- "TRANSACTION_DETAIL_REPORT_(JULY_1_2025-AUGUST_27_2025).csv"
+- "TRANSACTION_DETAIL_REPORT_(MARCH_1_2025-APRIL_30_2025).csv"
+- "TRANSACTION_DETAIL_REPORT_(MAY_1_2025-JUNE_30_2025).csv"
+- "TRANSACTION_DETAIL_REPORT_(SEPTEMBER_1_2025-OCTOBER_31_2025).csv"
