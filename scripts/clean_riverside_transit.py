@@ -54,10 +54,16 @@ def filter_transactions(filename: str) -> pd.DataFrame:
     if mask.any():
         cutoff_idx = mask.idxmax()
         t_raw_df = t_raw_df.loc[: cutoff_idx - 1]
-
+    
     # Coerce dtypes here because we're saving out filtered transactions too.
     # these dtypes should match what we'll use for transactions -> stop ridership
-    t_raw_df = t_raw_df.astype({"Route": "int", "Stop ID": "int"})
+    t_raw_df = t_raw_df.astype({"Route": "Int64", "Stop ID": "Int64"})
+
+    t_raw_df["Location"] = pd.to_numeric(t_raw_df["Location"], errors='coerce')
+    t_raw_df['Location'] = t_raw_df['Location'].astype('Int64')
+
+    # Convert mixed string formats into datetime dtype (1/1/2025 00:00 an 01/01/2025 00:00:00 will be converted to consistent format)
+    t_raw_df["Date Time"] = pd.to_datetime(t_raw_df["Date Time"], errors="coerce", format="mixed")
 
     return t_raw_df
 
