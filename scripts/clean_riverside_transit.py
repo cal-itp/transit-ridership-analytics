@@ -59,7 +59,7 @@ def filter_transactions(filename: str) -> pd.DataFrame:
     # these dtypes should match what we'll use for transactions -> stop ridership
     t_raw_df = t_raw_df.astype({"Route": "Int64", "Stop ID": "Int64"})
 
-    t_raw_df["Location"] = pd.to_numeric(t_raw_df["Location"], errors='coerce')
+    t_raw_df["Location"] = pd.to_numeric(t_raw_df["Location"], errors='coerce'i
     t_raw_df['Location'] = t_raw_df['Location'].astype('Int64')
 
     # Convert mixed string formats into datetime dtype (1/1/2025 00:00 an 01/01/2025 00:00:00 will be converted to consistent format)
@@ -79,8 +79,6 @@ def ingest_riverside_transit(agency_name: str = "riverside_transit") -> pd.DataF
     records for the corresponding combination.
     """
     list_of_files = list(RAW_DATA_YAML[agency_name])
-    for file in list_of_files:
-        print(file)
 
     filtered_raw_transactions = pd.concat(
         [filter_transactions(f"{LOCAL_FOLDER}{agency_name}/{filename}") for filename in list_of_files],
