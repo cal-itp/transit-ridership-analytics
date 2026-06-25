@@ -2,16 +2,19 @@
 Utility functions related to publishing datasets.
 Ex: writing out data to public GCS bucket
 """
-import gcsfs
-import google.auth
+
 import os
 from pathlib import Path
 from typing import Union
+
+import gcsfs
+import google.auth
 
 credentials, _ = google.auth.default()
 
 fs = gcsfs.GCSFileSystem()
 PUBLIC_BUCKET = "gs://calitp-publish-data-analysis/"
+
 
 def write_to_public_gcs(
     original_filename_object: Union[str, Path],

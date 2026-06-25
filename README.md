@@ -84,7 +84,7 @@ The report summarizes the data collection, processing workflow, key data caveats
 
 ## Data Processing Overview
 
-The combined stop-level ridership dataset was derived from heterogeneous agency-provided datasets, which vary in format, granularity and available fields. 
+The combined stop-level ridership dataset was derived from heterogeneous agency-provided datasets, which vary in format, granularity and available fields.
 
 1. Data ingest and schema standardization. Minimal transformations necessary were applied to standardize the inputs into a consistent long-format with a shared schema and daily ridership granularity.
 2. Stop attributes enrichment. This addressed missing stop attributes in agency submissions by enriching records with stop IDs, stop names, and stop coordinates sourced from GTFS data. Enrichment was applied only where these fields were absent in the agency-provided datasets. Residual gaps remain where stops could not be confidently matched.
