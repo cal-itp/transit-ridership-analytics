@@ -14,4 +14,3 @@ ridership_measure: "daily"
 geographic_grain: "trip_stop"
 daily_ridership_basis: "reported_daily"
 notes:
-    
