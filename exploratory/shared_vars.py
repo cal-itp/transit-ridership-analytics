@@ -1,0 +1,7 @@
+GCS_FILE_PATH = "gs://calitp-analytics-data/data-analyses/transit-ridership-analytics/"
+LOCAL_FOLDER = "../transit_agency_ridership_raw_datasets/"
+AGENCY_GCS = f"{GCS_FILE_PATH}transit_agency_raw/"
+RAW_GCS = f"{GCS_FILE_PATH}raw/"
+INTERMED_GCS = f"{GCS_FILE_PATH}intermediate/"
+PROCESSED_GCS = f"{GCS_FILE_PATH}processed/"
+PUBLIC_GCS = "gs://calitp-publish-data-analysis/"
