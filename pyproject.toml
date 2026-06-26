@@ -12,7 +12,7 @@ dependencies = [
     "branca>=0.8.2",
     "click<8.3",
     "folium>=0.20.0,<0.21.0",
-    "geopandas>=0.14.0,<0.15.0",
+    "geopandas>=1.1.2,<1.2.0",
     "gcsfs>=2026.4.0",
     "great-tables>=0.22.0",
     "gt-extras>=0.0.8",
