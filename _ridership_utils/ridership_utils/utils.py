@@ -1,19 +1,21 @@
 """
 General utility functions.
 """
-import base64
-import geopandas as gpd
-import gcsfs
+
 import os
-import pandas as pd
 import shutil
 from pathlib import Path
 from typing import Literal, Optional, Union
+
+import gcsfs
+import geopandas as gpd
+import pandas as pd
 
 fs = gcsfs.GCSFileSystem()
 
 CALITP_BQ_MAX_BYTES = os.environ.get("CALITP_BQ_MAX_BYTES", 5_000_000_000)
 CALITP_BQ_LOCATION = os.environ.get("CALITP_BQ_LOCATION", "us-west2")
+
 
 def to_snakecase(df: pd.DataFrame):
     """
